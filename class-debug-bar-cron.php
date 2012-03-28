@@ -75,7 +75,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		echo '<div id="debug-bar-request">';
 		echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>' . $this->_total_crons . '</h2>';
 		echo '<h2><span>' . __( 'Doing Cron', 'zt-debug-bar-cron' ) . ':</span>' . $doing_cron . '</h2>';
-		echo '<h2><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>' . $time_next_cron . ' / ' . $unix_time_next_cron . ' / ' . $human_time_next_cron . '</h2>';
+		echo '<h2 class="times"><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>' . $time_next_cron . '<br />' . $unix_time_next_cron . '<br />' . $human_time_next_cron . '</h2>';
 		echo '<h2><span>' . __( 'Current Time', 'zt-debug-bar-cron' ) . ':</span>' . date( 'H:i:s' ) . '</h2>';
 		echo '<div class="clear"></div>';
 
@@ -154,25 +154,25 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		if ( is_null( $events ) || empty( $events ) )
 			return '';
 
-		echo '<table class="zt-debug-bar-cron-event-table">';
+		echo '<table class="zt-debug-bar-cron-event-table" cellspacing="0">';
 		echo '<thead>';
-		echo '<th>' . __( 'Next Execution', 'zt-debug-bar-cron' ) . '</th>';
-		echo '<th>' . __( 'Hook', 'zt-debug-bar-cron' ) . '</th>';
-		echo '<th>' . __( 'Interval Hook', 'zt-debug-bar-cron' ) . '</th>';
-		echo '<th>' . __( 'Interval Value', 'zt-debug-bar-cron' ) . '</th>';
-		echo '<th>' . __( 'Args', 'zt-debug-bar-cron' ) . '</th>';
+		echo '<th width="180px">' . __( 'Next Execution', 'zt-debug-bar-cron' ) . '</th>';
+		echo '<th width="25%">' . __( 'Hook', 'zt-debug-bar-cron' ) . '</th>';
+		echo '<th width="20%">' . __( 'Interval Hook', 'zt-debug-bar-cron' ) . '</th>';
+		echo '<th width="120px">' . __( 'Interval Value', 'zt-debug-bar-cron' ) . '</th>';
+		echo '<th width="25%">' . __( 'Args', 'zt-debug-bar-cron' ) . '</th>';
 		echo '</thead>';
 
 		foreach ( $events as $time => $time_cron_array ) {
 			$class = 'odd';
 			foreach ( $time_cron_array as $hook => $data ) {
 				echo '<tr class="' . $class . '">';
-				echo '<td>' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . '</td>';
-				echo '<td>' . wp_strip_all_tags( $hook ) . '</td>';
+				echo '<td valign="top">' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . '</td>';
+				echo '<td valign="top">' . wp_strip_all_tags( $hook ) . '</td>';
 
 				foreach ( $data as $hash => $info ) {
 					// Report the schedule
-					echo '<td>';
+					echo '<td valign="top">';
 					if ( $info['schedule'] )
 						echo wp_strip_all_tags( $info['schedule'] );
 					else
@@ -180,7 +180,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					echo '</td>';
 
 					// Report the interval
-					echo '<td>';
+					echo '<td valign="top">';
 					if ( isset( $info['interval'] ) ) {
 						echo wp_strip_all_tags( $info['interval'] ) . 's<br />';
 						echo $info['interval'] / 60 . 'm<br />';
@@ -191,7 +191,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					echo '</td>';
 
 					// Report the args
-					echo '<td>';
+					echo '<td valign="top">';
 					if ( ! empty( $info['args'] ) ) {
 						foreach ( $info['args'] as $key => $value ) {
 							echo wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value ) . '<br />';
@@ -203,7 +203,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 				}
 
 				echo '</tr>';
-				$class = ( 'odd' == $class ) ? '$even' : 'odd';
+				$class = ( 'odd' == $class ) ? 'even' : 'odd';
 			}
 		}
 
