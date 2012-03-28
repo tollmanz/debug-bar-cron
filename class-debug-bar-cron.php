@@ -1,30 +1,65 @@
 <?php
 
+/**
+ * Add a new Debug Bar Panel.
+ */
 class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
+	/**
+	 * Holds all of the cron events.
+	 *
+	 * @var array
+	 */
 	private $_crons;
 
+	/**
+	 * Holds only the cron events initiated by WP core.
+	 *
+	 * @var array
+	 */
 	private $_core_crons;
 
+	/**
+	 * Holds the cron events created by plugins or themes.
+	 *
+	 * @var array
+	 */
 	private $_user_crons;
 
+	/**
+	 * Total number of cron events
+	 *
+	 * @var int
+	 */
 	private $_total_crons = 0;
 
+	/**
+	 * Give the panel a title and set the enqueues.
+	 */
 	function init() {
 		$this->title( __( 'Cron', 'debug-bar' ) );
 		add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
 		add_action( 'admin_print_styles', array( $this, 'print_styles' ) );
 	}
 
+	/**
+	 * Enqueue styles.
+	 */
 	function print_styles() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.dev' : '';
 		wp_enqueue_style( 'zt-debug-bar-cron', plugins_url( "css/debug-bar-cron$suffix.css", __FILE__ ), array(), '20120325' );
 	}
 
+	/**
+	 * Show the menu items in Debug Bar.
+	 */
 	function prerender() {
 		$this->set_visible( true );
 	}
 
+	/**
+	 * Show the contents of the page.
+	 */
 	function render() {
 		$this->get_crons();
 
@@ -63,6 +98,14 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		echo '</div>';
 	}
 
+	/**
+	 * Gets all of the cron jobs.
+	 *
+	 * This function sorts the cron jobs into core crons, and custom crons. It also tallies
+	 * a total count for the crons as this number is otherwise tough to get.
+	 *
+	 * @return array
+	 */
 	function get_crons() {
 		if ( ! is_null( $this->_crons ) )
 			return $this->_crons;
@@ -86,6 +129,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 			'wp_update_themes'
 		);
 
+		// Sort and count crons
 		foreach ( $this->_crons as $time => $time_cron_array ) {
 			foreach ( $time_cron_array as $hook => $data ) {
 				$this->_total_crons++;
@@ -100,6 +144,12 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		return $this->_crons;
 	}
 
+	/**
+	 * Displays the events in an easy to read table.
+	 *
+	 * @param $events
+	 * @return string
+	 */
 	function display_events( $events ) {
 		if ( is_null( $events ) || empty( $events ) )
 			return '';
@@ -159,8 +209,4 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 		echo '</table>';
 	}
-
-	function seconds_to_human() {}
-
-
 }

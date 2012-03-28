@@ -8,6 +8,12 @@ Version: 0.1
 Author URI: http://twitter.com/zack_dev
 */
 
+/**
+ * Adds panel, as defined in the included class, to Debug Bar.
+ *
+ * @param $panels
+ * @return array
+ */
 function zt_add_debug_bar_cron_panel( $panels ) {
 	if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) ) {
 		include ( 'class-debug-bar-cron.php' );
