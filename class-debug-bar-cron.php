@@ -28,9 +28,11 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	function render() {
 		$this->get_crons();
 
+		$doing_cron = get_transient( 'doing_cron' ) ? 'Yes' : 'No';
+
 		echo '<div id="debug-bar-request">';
 		echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>' . $this->_total_crons . '</h2>';
-		echo '<h2><span>' . __( 'Cron Lock', 'zt-debug-bar-cron' ) . ':</span>Locked</h2>';
+		echo '<h2><span>' . __( 'Doing Cron', 'zt-debug-bar-cron' ) . ':</span>' . $doing_cron . '</h2>';
 		echo '<h2><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>01:15:23</h2>';
 		echo '<h2><span>' . __( 'Current Time', 'zt-debug-bar-cron' ) . ':</span>' . date( 'H:i:s' ) . '</h2>';
 		echo '<div class="clear"></div>';
