@@ -8,6 +8,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 	private $_user_crons;
 
+	private $_total_crons = 0;
+
 	function init() {
 		$this->title( __( 'Cron', 'debug-bar' ) );
 		add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
@@ -27,7 +29,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		$this->get_crons();
 
 		echo '<div id="debug-bar-request">';
-		echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>15</h2>';
+		echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>' . $this->_total_crons . '</h2>';
 		echo '<h2><span>' . __( 'Cron Lock', 'zt-debug-bar-cron' ) . ':</span>Locked</h2>';
 		echo '<h2><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>01:15:23</h2>';
 		echo '<h2><span>' . __( 'Current Time', 'zt-debug-bar-cron' ) . ':</span>' . date( 'H:i:s' ) . '</h2>';
@@ -77,6 +79,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 		foreach ( $this->_crons as $time => $time_cron_array ) {
 			foreach ( $time_cron_array as $hook => $data ) {
+				$this->_total_crons++;
 				if ( in_array( $hook, $core_cron_hooks ) )
 					$this->_core_crons[ $time ][ $hook ] = $data;
 				else
