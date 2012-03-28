@@ -154,6 +154,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		if ( is_null( $events ) || empty( $events ) )
 			return '';
 
+		$class = 'odd';
+
 		echo '<table class="zt-debug-bar-cron-event-table" cellspacing="0">';
 		echo '<thead>';
 		echo '<th width="180px">' . __( 'Next Execution', 'zt-debug-bar-cron' ) . '</th>';
@@ -164,7 +166,6 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		echo '</thead>';
 
 		foreach ( $events as $time => $time_cron_array ) {
-			$class = 'odd';
 			foreach ( $time_cron_array as $hook => $data ) {
 				echo '<tr class="' . $class . '">';
 				echo '<td valign="top">' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . '</td>';

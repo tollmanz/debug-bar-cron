@@ -2,6 +2,9 @@
 	font-size: 1.7em;
 	line-height: 1.1;
 }
+#debug-bar-request h2.times span {
+	line-height: 150%;
+}
 .zt-debug-bar-cron-event-table {
 	width: 100%;
 	border-top: 1px solid #dfdfdf;
