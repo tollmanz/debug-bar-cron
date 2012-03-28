@@ -116,7 +116,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		foreach ( $events as $time => $time_cron_array ) {
 			foreach ( $time_cron_array as $hook => $data ) {
 				echo '<tr>';
-				echo '<td>' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '</td>';
+				echo '<td>' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . '</td>';
 				echo '<td>' . wp_strip_all_tags( $hook ) . '</td>';
 
 				foreach ( $data as $hash => $info ) {
