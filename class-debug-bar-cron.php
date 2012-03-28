@@ -114,26 +114,38 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		echo '</thead>';
 
 		foreach ( $events as $time => $time_cron_array ) {
+			$class = 'odd';
 			foreach ( $time_cron_array as $hook => $data ) {
-				echo '<tr>';
+				echo '<tr class="' . $class . '">';
 				echo '<td>' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . '</td>';
 				echo '<td>' . wp_strip_all_tags( $hook ) . '</td>';
 
 				foreach ( $data as $hash => $info ) {
-					echo '<td>' . wp_strip_all_tags( $info['schedule'] ) . '</td>';
+					// Report the schedule
+					echo '<td>';
+					if ( $info['schedule'] )
+						echo wp_strip_all_tags( $info['schedule'] );
+					else
+						echo 'Single Event';
+					echo '</td>';
 
+					// Report the interval
 					echo '<td>';
 					if ( isset( $info['interval'] ) ) {
-						echo wp_strip_all_tags( $info['interval'] ) . 's';
-						echo '<br />' . $info['interval'] / 60 . 'm';
-						echo '<br />' . $info['interval'] / ( 60  * 60 ). 'h';
+						echo wp_strip_all_tags( $info['interval'] ) . 's<br />';
+						echo $info['interval'] / 60 . 'm<br />';
+						echo $info['interval'] / ( 60  * 60 ). 'h';
+					} else {
+						echo 'Single Event';
 					}
 					echo '</td>';
 
+					// Report the args
 					echo '<td>';
 					if ( ! empty( $info['args'] ) ) {
-						foreach ( $info['args'] as $key => $value )
-							echo wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value );
+						foreach ( $info['args'] as $key => $value ) {
+							echo wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value ) . '<br />';
+						}
 					} else {
 						echo 'No Args';
 					}
@@ -141,6 +153,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 				}
 
 				echo '</tr>';
+				$class = ( 'odd' == $class ) ? '$even' : 'odd';
 			}
 		}
 
