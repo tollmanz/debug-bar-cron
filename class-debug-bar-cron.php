@@ -32,15 +32,15 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 		// Get the time of the next event
 		$cron_times = array_keys( $this->_crons );
+		$unix_time_next_cron = $cron_times[0];
 
-		$unix_time = $cron_times[0];
-		$next_cron_human = date( 'Y-m-d H:i:s', $unix_time );
-		$time_until_next_cron = human_time_diff( $unix_time );
+		$time_next_cron = date( 'Y-m-d H:i:s', $unix_time_next_cron );
+		$human_time_next_cron = human_time_diff( $unix_time_next_cron );
 
 		echo '<div id="debug-bar-request">';
 		echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>' . $this->_total_crons . '</h2>';
 		echo '<h2><span>' . __( 'Doing Cron', 'zt-debug-bar-cron' ) . ':</span>' . $doing_cron . '</h2>';
-		echo '<h2><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>' . $next_cron_human . ' / ' . $unix_time . ' / ' . $time_until_next_cron . '</h2>';
+		echo '<h2><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>' . $time_next_cron . ' / ' . $unix_time_next_cron . ' / ' . $human_time_next_cron . '</h2>';
 		echo '<h2><span>' . __( 'Current Time', 'zt-debug-bar-cron' ) . ':</span>' . date( 'H:i:s' ) . '</h2>';
 		echo '<div class="clear"></div>';
 
@@ -89,6 +89,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		foreach ( $this->_crons as $time => $time_cron_array ) {
 			foreach ( $time_cron_array as $hook => $data ) {
 				$this->_total_crons++;
+
 				if ( in_array( $hook, $core_cron_hooks ) )
 					$this->_core_crons[ $time ][ $hook ] = $data;
 				else
@@ -133,6 +134,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					if ( ! empty( $info['args'] ) ) {
 						foreach ( $info['args'] as $key => $value )
 							echo wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value );
+					} else {
+						echo 'No Args';
 					}
 					echo '</td>';
 				}
