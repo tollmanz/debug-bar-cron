@@ -6,19 +6,19 @@
 	line-height: 150%;
 }
 #debug-bar-cron h3 {
-    font-family: georgia, times, serif;
-    font-size: 22px;
+	font-family: georgia, times, serif;
+	font-size: 22px;
 }
 .zt-debug-bar-cron-event-table {
 	width: 100%;
 	border-top: 1px solid #dfdfdf;
-	border-bottom: 1px solid #fcfcfc;
+    border-bottom: 1px solid #fcfcfc;
 }
 .zt-debug-bar-cron-event-table th,
 .zt-debug-bar-cron-event-table td {
 	padding: .3em 2.5em .3em .3em;
-    border-top: 1px solid #fcfcfc;
-    border-bottom: 1px solid #dfdfdf;
+	border-top: 1px solid #fcfcfc;
+	border-bottom: 1px solid #dfdfdf;
 }
 .zt-debug-bar-cron-event-table thead,
 .zt-debug-bar-cron-event-table tr.even {
