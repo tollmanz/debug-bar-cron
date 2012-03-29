@@ -25,9 +25,9 @@ Once installed, you will have access to the following information:
 == Installation ==
 
 1. Install Debug Bar if not already installed (http://wordpress.org/extend/plugins/debug-bar/)
-2. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
+2. Upload the `debug-bar-cron` folder to the `/wp-content/plugins/` directory
 3. Activate the plugin through the 'Plugins' menu in WordPress
-4. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
+4. View the WP schedule events information in the "Cron" panel in Debug Bar
 
 == Frequently Asked Questions ==
 
