@@ -72,8 +72,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		$time_next_cron = date( 'Y-m-d H:i:s', $unix_time_next_cron );
 		$human_time_next_cron = human_time_diff( $unix_time_next_cron );
 
-		echo '<div id="debug-bar-request">';
-		echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>' . $this->_total_crons . '</h2>';
+		echo '<div id="debug-bar-cron">';
+		echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>' . (int) $this->_total_crons . '</h2>';
 		echo '<h2><span>' . __( 'Doing Cron', 'zt-debug-bar-cron' ) . ':</span>' . $doing_cron . '</h2>';
 		echo '<h2 class="times"><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>' . $time_next_cron . '<br />' . $unix_time_next_cron . '<br />' . $human_time_next_cron . '</h2>';
 		echo '<h2><span>' . __( 'Current Time', 'zt-debug-bar-cron' ) . ':</span>' . date( 'H:i:s' ) . '</h2>';
@@ -151,8 +151,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	/**
 	 * Displays the events in an easy to read table.
 	 *
-	 * @param $events
-	 * @return string
+	 * @param $events Array of events
+	 * @return void|string
 	 */
 	private function display_events( $events ) {
 		if ( is_null( $events ) || empty( $events ) )
