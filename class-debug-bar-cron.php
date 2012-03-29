@@ -36,7 +36,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	/**
 	 * Give the panel a title and set the enqueues.
 	 */
-	function init() {
+	public function init() {
 		$this->title( __( 'Cron', 'debug-bar' ) );
 		add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
 		add_action( 'admin_print_styles', array( $this, 'print_styles' ) );
@@ -45,22 +45,22 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	/**
 	 * Enqueue styles.
 	 */
-	function print_styles() {
+	public function print_styles() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.dev' : '';
 		wp_enqueue_style( 'zt-debug-bar-cron', plugins_url( "css/debug-bar-cron$suffix.css", __FILE__ ), array(), '20120325' );
 	}
 
 	/**
-	 * Show the menu items in Debug Bar.
+	 * Show the menu item in Debug Bar.
 	 */
-	function prerender() {
+	public function prerender() {
 		$this->set_visible( true );
 	}
 
 	/**
 	 * Show the contents of the page.
 	 */
-	function render() {
+	public function render() {
 		$this->get_crons();
 
 		$doing_cron = get_transient( 'doing_cron' ) ? 'Yes' : 'No';
@@ -110,7 +110,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 *
 	 * @return array
 	 */
-	function get_crons() {
+	private function get_crons() {
 		if ( ! is_null( $this->_crons ) )
 			return $this->_crons;
 
@@ -154,7 +154,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 * @param $events
 	 * @return string
 	 */
-	function display_events( $events ) {
+	private function display_events( $events ) {
 		if ( is_null( $events ) || empty( $events ) )
 			return '';
 
@@ -218,7 +218,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	/**
 	 * Displays all of the schedules defined.
 	 */
-	function display_schedules() {
+	private function display_schedules() {
 		echo '<table class="zt-debug-bar-cron-event-table" cellspacing="0">';
 		echo '<thead>';
 		echo '<th width="180px">' . __( 'Interval Hook', 'zt-debug-bar-cron' ) . '</th>';
