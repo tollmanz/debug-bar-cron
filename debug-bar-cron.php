@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Debug Bar Cron
-Plugin URI: http://wordpress.org/extend/plugins/debug-bar-cron/
+Plugin URI: http://github.com/tollmanz/
 Description: Adds information about WP scheduled events to Debug Bar.
-Author: tollmanz
+Author: Zack Tollman, Helen Hou-Sandi
 Version: 0.1
-Author URI: http://twitter.com/zack_dev
+Author URI: http://github.com/tollmanz
 */
 
 /**
