@@ -11,8 +11,8 @@
 }
 .zt-debug-bar-cron-event-table {
 	width: 100%;
-    border-top: 1px solid #dfdfdf;
-    border-bottom: 1px solid #fcfcfc;
+	border-top: 1px solid #dfdfdf;
+	border-bottom: 1px solid #fcfcfc;
 }
 .zt-debug-bar-cron-event-table th,
 .zt-debug-bar-cron-event-table td {
