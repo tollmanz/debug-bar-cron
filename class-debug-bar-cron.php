@@ -87,6 +87,10 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 			echo '<p>' . __( 'No Custom Events scheduled.', 'zt-debug-bar-cron' ) . '</p>';
 		}
 
+		echo '<h3>' . __( 'Schedules', 'zt-debug-bar-cron' ) . '</h3>';
+
+		$this->display_schedules();
+
 		echo '<h3>' . __( 'Core Events', 'zt-debug-bar-cron' ) . '</h3>';
 
 		if ( ! is_null( $this->_core_crons ) ) {
@@ -206,6 +210,36 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 				echo '</tr>';
 				$class = ( 'odd' == $class ) ? 'even' : 'odd';
 			}
+		}
+
+		echo '</table>';
+	}
+
+	/**
+	 * Displays all of the schedules defined.
+	 */
+	function display_schedules() {
+		echo '<table class="zt-debug-bar-cron-event-table" cellspacing="0">';
+		echo '<thead>';
+		echo '<th width="180px">' . __( 'Interval Hook', 'zt-debug-bar-cron' ) . '</th>';
+		echo '<th width="25%">' . __( 'Interval Value', 'zt-debug-bar-cron' ) . '</th>';
+		echo '<th width="20%">' . __( 'Display Name', 'zt-debug-bar-cron' ) . '</th>';
+		echo '</thead>';
+
+		$class = 'odd';
+
+		foreach ( wp_get_schedules() as $interval_hook => $data ) {
+			echo '<tr class="' . $class . '">';
+			echo '<td valign="top">' . esc_html( $interval_hook ) . '</td>';
+			echo '<td valign="top">';
+			echo wp_strip_all_tags( $data['interval'] ) . 's<br />';
+			echo $data['interval'] / 60 . 'm<br />';
+			echo $data['interval'] / ( 60  * 60 ). 'h';
+			echo '</td>';
+			echo '<td valign="top">' . esc_html( $data['display'] ) . '</td>';
+			echo '</tr>';
+
+			$class = ( 'odd' == $class ) ? 'even' : 'odd';
 		}
 
 		echo '</table>';
