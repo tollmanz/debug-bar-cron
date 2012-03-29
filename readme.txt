@@ -1,5 +1,6 @@
 === Plugin Name ===
 Contributors: tollmanz, helenyhou
+Donate Link:
 Tags: debug bar, cron
 Requires at least: 3.3.1
 Tested up to: 3.3.1
@@ -9,7 +10,7 @@ Debug Bar Cron adds a new panel to Debug Bar that displays information about WP 
 
 == Description ==
 
-Debug Bar Cron adds information about WP schedules events to a new panel in the Debug Bar. This plugin is an extension for
+Debug Bar Cron adds information about WP scheduled events to a new panel in the Debug Bar. This plugin is an extension for
 Debug Bar and thus is dependent upon Debug Bar being installed for it to work properly.
 
 Once installed, you will have access to the following information:
@@ -19,7 +20,7 @@ Once installed, you will have access to the following information:
 * Current time
 * List of custom scheduled events
 * List of core scheduled events
-* List of custom schedules
+* List of schedules
 
 == Installation ==
 
@@ -30,7 +31,7 @@ Once installed, you will have access to the following information:
 
 == Frequently Asked Questions ==
 
-= Is debugging cron easier with this plugin =
+= Is debugging cron easier with this plugin? =
 
 Yes
 
@@ -42,3 +43,9 @@ Yes
 
 = 0.1 =
 * Initial release
+
+== Upgrade Notice ==
+
+= 0.1 =
+Initial Release
+
