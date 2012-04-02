@@ -95,9 +95,6 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 			echo '<h3>' . __( 'Console', 'zt-debug-bar-cron' ) . '</h3>';
 
 			echo '<p>The event "' . $console_log['hook'] . '" scheduled to run at "' . $console_log['time'] . '" was executed at "' . $console_log['now'] . '", taking "' . $console_log['duration'] . 's" to execute.</p>';
-			
-			if ( isset( $console_log['error'] ) && $console_log['error'] )
-				echo '<p>The function you attempted to execute was not available.</p>';
 
 			if ( isset( $console_log['contents'] ) && '' != trim( $console_log['contents'] )  )
 				echo '<div class="zt-debug-bar-cron-console">' . $console_log['contents'] . '</div>';
@@ -318,13 +315,14 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		$time = $_GET['zt-time'];
 		$hash = $_GET['zt-hash'];
 
+		$error = 'none';
+
 		ob_start();
 
 		$time_start = microtime( true );
 
 		// The function returns null if it cannot be found, so set an error flag
-		if ( is_null( do_action_ref_array( $hook, $this->_crons[$time][$hook][$hash]['args'] ) ) )
-			$error = true;
+		do_action_ref_array( $hook, $this->_crons[$time][$hook][$hash]['args'] );
 
 		$time_end = microtime( true );
 		$duration = $time_end - $time_start;
@@ -332,8 +330,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		$contents = ob_get_contents();
 		ob_end_clean();
 
-		$console = array(
-			'error' => isset( $error ) && $error ? true : false,
+		$console_log = array(
+			'error' => $error,
 			'duration' => $duration,
 			'hook' => $hook,
 			'time' => $time,
@@ -343,7 +341,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		);
 
 		// Set those contents to a transient in order to display them in the console
-		set_transient( 'zt-debug-bar-cron-console', $console );
+		set_transient( 'zt-debug-bar-cron-console', $console_log );
 
 		wp_redirect( wp_get_referer() );
 		die();
