@@ -90,6 +90,21 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		echo '<h2><span>' . __( 'Current Time', 'zt-debug-bar-cron' ) . ':</span>' . date( 'H:i:s' ) . '</h2>';
 		echo '<div class="clear"></div>';
 
+		// Display the console if anything is available to display
+		if ( $console_log = get_transient( 'zt-debug-bar-cron-console' ) ) {
+			echo '<h3>' . __( 'Console', 'zt-debug-bar-cron' ) . '</h3>';
+
+			echo '<p>The event "' . $console_log['hook'] . '" scheduled to run at "' . $console_log['time'] . '" was executed at "' . $console_log['now'] . '", taking "' . $console_log['duration'] . 's" to execute.</p>';
+			
+			if ( isset( $console_log['error'] ) && $console_log['error'] )
+				echo '<p>The function you attempted to execute was not available.</p>';
+
+			if ( isset( $console_log['contents'] ) && '' != trim( $console_log['contents'] )  )
+				echo '<div class="zt-debug-bar-cron-console">' . $console_log['contents'] . '</div>';
+
+			delete_transient( 'zt-debug-bar-cron-console' );
+		}
+
 		echo '<h3>' . __( 'Custom Events', 'zt-debug-bar-cron' ) . '</h3>';
 
 		if ( ! is_null( $this->_user_crons ) ) {
@@ -305,15 +320,25 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 		ob_start();
 
+		$time_start = microtime( true );
+
 		// The function returns null if it cannot be found, so set an error flag
 		if ( is_null( do_action_ref_array( $hook, $this->_crons[$time][$hook][$hash]['args'] ) ) )
 			$error = true;
+
+		$time_end = microtime( true );
+		$duration = $time_end - $time_start;
 
 		$contents = ob_get_contents();
 		ob_end_clean();
 
 		$console = array(
 			'error' => isset( $error ) && $error ? true : false,
+			'duration' => $duration,
+			'hook' => $hook,
+			'time' => $time,
+			'hash' => $hash,
+			'now' => time(),
 			'contents' => $contents
 		);
 
