@@ -26,20 +26,33 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 */
 	private $_user_crons;
 
+	private $_hooks;
+
+	private $_times;
+
+	private $_hashes;
+
 	/**
-	 * Total number of cron events
+	 * Total number of cron events.
 	 *
 	 * @var int
 	 */
 	private $_total_crons = 0;
 
+	private $_request_url;
+
 	/**
 	 * Give the panel a title and set the enqueues.
 	 */
 	public function init() {
+		$this->_request_url = admin_url( '/options.php' );
+		$this->get_crons();
 		$this->title( __( 'Cron', 'debug-bar' ) );
+
 		add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
 		add_action( 'admin_print_styles', array( $this, 'print_styles' ) );
+
+		add_action( 'admin_init', array( $this, 'process_request' ) );
 	}
 
 	/**
@@ -61,8 +74,6 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 * Show the contents of the page.
 	 */
 	public function render() {
-		$this->get_crons();
-
 		$doing_cron = get_transient( 'doing_cron' ) ? 'Yes' : 'No';
 
 		// Get the time of the next event
@@ -142,6 +153,13 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					$this->_core_crons[ $time ][ $hook ] = $data;
 				else
 					$this->_user_crons[ $time ][ $hook ] = $data;
+
+				$this->_hooks[] = $hook;
+				$this->_times[] = $time;
+
+				$keys = array_keys( $data );
+				$hash = wp_strip_all_tags( $keys[0] );
+				$this->_hashes[] = $hash;
 			}
 		}
 
@@ -162,6 +180,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 		echo '<table class="zt-debug-bar-cron-event-table" cellspacing="0">';
 		echo '<thead>';
+		echo '<th></th>';
 		echo '<th width="180px">' . __( 'Next Execution', 'zt-debug-bar-cron' ) . '</th>';
 		echo '<th width="25%">' . __( 'Hook', 'zt-debug-bar-cron' ) . '</th>';
 		echo '<th width="20%">' . __( 'Interval Hook', 'zt-debug-bar-cron' ) . '</th>';
@@ -171,7 +190,22 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 		foreach ( $events as $time => $time_cron_array ) {
 			foreach ( $time_cron_array as $hook => $data ) {
+				$keys = array_keys( $data );
+				$hash = wp_strip_all_tags( $keys[0] );
+
+				// Prepare action URLs
+				$run_url = $this->_request_url;
+				$run_url = add_query_arg( 'zt-action', 'run', $run_url );
+				$run_url = add_query_arg( 'zt-hook', wp_strip_all_tags( $hook ), $run_url );
+				$run_url = add_query_arg( 'zt-time', wp_strip_all_tags( $time ), $run_url );
+				$run_url = add_query_arg( 'zt-hash', wp_strip_all_tags( $hash ), $run_url );
+				$run_url = wp_nonce_url( $run_url );
+
 				echo '<tr class="' . $class . '">';
+
+				/* @todo: add nonces */
+				echo '<td><a href="' . esc_url( $run_url ) . '" title="Run Function"><img src="' . plugins_url( '/images/run.png', __FILE__ ) . '" alt="Run Icon" /></a><br />';
+				echo '<a href="#" title="Cancel Event"><img src="' . plugins_url( '/images/delete.png', __FILE__ ) . '" alt="Delete Icon" /></a></td>';
 				echo '<td valign="top">' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . '</td>';
 				echo '<td valign="top">' . wp_strip_all_tags( $hook ) . '</td>';
 
@@ -243,5 +277,50 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		}
 
 		echo '</table>';
+	}
+
+	public function process_request() {
+		global $pagenow;
+		if ( 'options.php' != $pagenow )
+			return false;
+
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'] ) )
+			return false;
+
+		// Check that the necessary components are available
+		$actions = array( 'run', 'cancel', 'reschedule' );
+		if ( ! isset( $_GET['zt-action'] ) || ! in_array( $_GET['zt-action'], $actions ) ||
+			! isset( $_GET['zt-hook'] ) || ! in_array( $_GET['zt-hook'], $this->_hooks ) ||
+			! isset( $_GET['zt-time'] ) || ! in_array( $_GET['zt-time'], $this->_times ) ||
+			! isset( $_GET['zt-hash'] ) || ! in_array( $_GET['zt-hash'], $this->_hashes ) ) {
+			wp_redirect( wp_get_referer() );
+			die();
+		}
+
+		// All of these are whitelisted, so don't worry about sanitizing
+		$action = $_GET['zt-action'];
+		$hook = $_GET['zt-hook'];
+		$time = $_GET['zt-time'];
+		$hash = $_GET['zt-hash'];
+
+		ob_start();
+
+		// The function returns null if it cannot be found, so set an error flag
+		if ( is_null( do_action_ref_array( $hook, $this->_crons[$time][$hook][$hash]['args'] ) ) )
+			$error = true;
+
+		$contents = ob_get_contents();
+		ob_end_clean();
+
+		$console = array(
+			'error' => isset( $error ) && $error ? true : false,
+			'contents' => $contents
+		);
+
+		// Set those contents to a transient in order to display them in the console
+		set_transient( 'zt-debug-bar-cron-console', $console );
+
+		wp_redirect( wp_get_referer() );
+		die();
 	}
 }
