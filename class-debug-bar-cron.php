@@ -97,7 +97,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 			echo '<p>The event "' . $console_log['hook'] . '" scheduled to run at "' . $console_log['time'] . '" was executed at "' . $console_log['now'] . '", taking "' . $console_log['duration'] . 's" to execute.</p>';
 
 			if ( isset( $console_log['contents'] ) && '' != trim( $console_log['contents'] )  )
-				echo '<iframe width="100%" height="200"><html><head></head><body><div class="zt-debug-bar-cron-console">' . $console_log['contents'] . '</div></body></html></iframe>';
+				echo '<div class="zt-debug-bar-cron-console"><pre>' . $console_log['contents'] . '</pre></div>';
 
 			delete_transient( 'zt-debug-bar-cron-console' );
 		}
