@@ -107,7 +107,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 			echo '</pre></div>';
 
 			if ( isset( $console_log['output'] ) && '' != trim( $console_log['output'] )  )
-				echo '<div class="zt-debug-bar-cron-console"><pre>' . esc_html( $console_log['output'] ) . '</pre></div>';
+				echo '<div class="zt-debug-bar-cron-console"><pre>' . wp_strip_all_tags( $console_log['output'] ) . '</pre></div>';
 
 			delete_transient( 'zt-debug-bar-cron-console' );
 		}

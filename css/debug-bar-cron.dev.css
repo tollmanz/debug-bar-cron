@@ -24,3 +24,10 @@
 .zt-debug-bar-cron-event-table tr.even {
 	background: #fcfcfc;
 }
+.zt-debug-bar-cron-console {
+	background: #FCFCFC;
+	border-radius: 10px;
+	border: 1px solid #CFCFCF;
+	overflow: hidden;
+	margin-top: 5px;
+}
