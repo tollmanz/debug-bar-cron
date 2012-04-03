@@ -96,8 +96,18 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 			echo '<p>The event "' . $console_log['hook'] . '" scheduled to run at "' . $console_log['time'] . '" was executed at "' . $console_log['now'] . '", taking "' . $console_log['duration'] . 's" to execute.</p>';
 
-			if ( isset( $console_log['contents'] ) && '' != trim( $console_log['contents'] )  )
-				echo '<div class="zt-debug-bar-cron-console"><pre>' . $console_log['contents'] . '</pre></div>';
+			echo '<div class="zt-debug-bar-cron-console"><pre>';
+			
+			if ( isset( $console_log['log'] ) && count( $console_log['log'] ) > 0 ) {
+				foreach ( $console_log['log'] as $item ) {
+					echo '<p>' . $item . '</p>';
+				}	
+			}
+						
+			echo '</pre></div>';
+
+			if ( isset( $console_log['output'] ) && '' != trim( $console_log['output'] )  )
+				echo '<div class="zt-debug-bar-cron-console"><pre>' . esc_html( $console_log['output'] ) . '</pre></div>';
 
 			delete_transient( 'zt-debug-bar-cron-console' );
 		}
@@ -330,15 +340,20 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		$contents = ob_get_contents();
 		ob_end_clean();
 
-		$console_log = array(
+		if ( ! $console_log = get_transient( 'zt-debug-bar-cron-console' ) )
+			$console_log = array();
+
+		$add_console_log = array(
 			'error' => $error,
 			'duration' => $duration,
 			'hook' => $hook,
 			'time' => $time,
 			'hash' => $hash,
 			'now' => time(),
-			'contents' => $contents
+			'output' => $contents
 		);
+
+		$console_log = array_merge( $add_console_log, $console_log );
 
 		// Set those contents to a transient in order to display them in the console
 		set_transient( 'zt-debug-bar-cron-console', $console_log );
@@ -346,4 +361,13 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		wp_redirect( wp_get_referer() );
 		die();
 	}
+}
+
+function dbc_log( $string ) {
+	if ( ! $console_log = get_transient( 'zt-debug-bar-cron-console' ) )
+		$console_log = array();
+
+	$console_log['log'][] = $string;
+
+	set_transient( 'zt-debug-bar-cron-console', $console_log );
 }
