@@ -70,7 +70,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	public function render() {
 		$this->get_crons();
 
-		$this->_doing_cron = get_transient( 'doing_cron' ) ? 'Yes' : 'No';
+		$this->_doing_cron = get_transient( 'doing_cron' ) ? __( 'Yes', 'zt-debug-bar-cron' ) : __( 'No', 'zt-debug-bar-cron' );
 
 		// Get the time of the next event
 		$cron_times = array_keys( $this->_crons );
@@ -263,6 +263,6 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 * @return  string
 	 */
 	private function display_past_time( $time ) {
-		return time() > $time ? ' ago' : '';
+		return time() > $time ? ' ' . __( 'ago', 'zt-debug-bar-cron' ) : '';
 	}
 }
