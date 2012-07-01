@@ -36,12 +36,14 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	/**   
 	 * Whether cron is being executed or not.
 	 * 
-	 * @var string  Yes or No.
+	 * @var string
 	 */
 	private $_doing_cron = 'No';
 
 	/**
 	 * Give the panel a title and set the enqueues.
+	 *
+	 * @return void
 	 */
 	public function init() {
 		$this->title( __( 'Cron', 'debug-bar' ) );
@@ -51,6 +53,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 	/**
 	 * Enqueue styles.
+	 *
+	 * @return  void
 	 */
 	public function print_styles() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.dev' : '';
@@ -59,6 +63,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 	/**
 	 * Show the menu item in Debug Bar.
+	 *
+	 * @return  void
 	 */
 	public function prerender() {
 		$this->set_visible( true );
@@ -66,6 +72,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 	/**
 	 * Show the contents of the page.
+
+	 * @return  void
 	 */
 	public function render() {
 		$this->get_crons();
@@ -116,7 +124,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 * This function sorts the cron jobs into core crons, and custom crons. It also tallies
 	 * a total count for the crons as this number is otherwise tough to get.
 	 *
-	 * @return array
+	 * @return  array   Array of crons.
 	 */
 	private function get_crons() {
 		if ( ! is_null( $this->_crons ) )
@@ -159,12 +167,12 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	/**
 	 * Displays the events in an easy to read table.
 	 *
-	 * @param $events Array of events
-	 * @return void|string
+	 * @param   array   $events     Array of events.
+	 * @return  void|string         Void on failure; table display of events on success.
 	 */
 	private function display_events( $events ) {
 		if ( is_null( $events ) || empty( $events ) )
-			return '';
+			return;
 
 		$class = 'odd';
 
@@ -228,6 +236,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 	/**
 	 * Displays all of the schedules defined.
+	 *
+	 * @return  void
 	 */
 	private function display_schedules() {
 		echo '<table class="zt-debug-bar-cron-event-table" cellspacing="0">';
