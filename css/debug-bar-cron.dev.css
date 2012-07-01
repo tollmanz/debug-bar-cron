@@ -5,6 +5,12 @@
 #debug-bar-cron h2.times span {
 	line-height: 150%;
 }
+#debug-bar-cron .past {
+	color: red;
+}
+#debug-bar-cron h2.times.past span {
+	color: #888;
+}
 #debug-bar-cron h3 {
 	font-family: georgia, times, serif;
 	font-size: 22px;
@@ -23,4 +29,7 @@
 .zt-debug-bar-cron-event-table thead,
 .zt-debug-bar-cron-event-table tr.even {
 	background: #fcfcfc;
+}
+.zt-debug-bar-cron-event-table td.past {
+	font-weight: bold;
 }
