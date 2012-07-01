@@ -2,7 +2,7 @@
 Contributors: tollmanz, helenyhou
 Donate Link: http://wordpress.org
 Tags: debug bar, cron
-Requires at least: 3.4
+Requires at least: 3.3
 Tested up to: trunk
 Stable tag: 0.1.2
 
