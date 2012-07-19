@@ -58,7 +58,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 */
 	public function print_styles() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.dev' : '';
-		wp_enqueue_style( 'zt-debug-bar-cron', plugins_url( "css/debug-bar-cron$suffix.css", __FILE__ ), array(), '20120325' );
+		wp_enqueue_style( 'zt-debug-bar-cron', plugins_url( basename( dirname(__FILE__) ) . "/css/debug-bar-cron$suffix.css" ), array(), '20120325' );
 	}
 
 	/**
