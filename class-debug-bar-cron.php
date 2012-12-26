@@ -217,9 +217,9 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					// Report the args
 					echo '<td valign="top">';
 					if ( ! empty( $info['args'] ) ) {
-						foreach ( $info['args'] as $key => $value ) {
+						array_walk_recursive( $info['args'], function( $value, $key ) {
 							echo wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value ) . '<br />';
-						}
+						} );
 					} else {
 						echo 'No Args';
 					}
