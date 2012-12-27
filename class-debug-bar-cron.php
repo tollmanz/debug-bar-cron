@@ -97,13 +97,13 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 			echo '<p>The event "' . $console_log['hook'] . '" scheduled to run at "' . $console_log['time'] . '" was executed at "' . $console_log['now'] . '", taking "' . $console_log['duration'] . 's" to execute.</p>';
 
 			echo '<div class="zt-debug-bar-cron-console"><pre>';
-			
+
 			if ( isset( $console_log['log'] ) && count( $console_log['log'] ) > 0 ) {
 				foreach ( $console_log['log'] as $item ) {
 					echo '<p>' . $item . '</p>';
-				}	
+				}
 			}
-						
+
 			echo '</pre></div>';
 
 			if ( isset( $console_log['output'] ) && '' != trim( $console_log['output'] )  )
@@ -254,9 +254,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					// Report the args
 					echo '<td valign="top">';
 					if ( ! empty( $info['args'] ) ) {
-						foreach ( $info['args'] as $key => $value ) {
-							echo wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value ) . '<br />';
-						}
+						array_walk_recursive( $info['args'], array( $this, 'print_cron_args' ) );
 					} else {
 						echo 'No Args';
 					}
@@ -360,6 +358,16 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 		wp_redirect( wp_get_referer() );
 		die();
+	}
+
+	/**
+	 * Callback for array_walk_recursive to print a cron event's arguments
+	 *
+	 * @param   mixed   $value  May be a string, array, int, etc
+	 * @param   string  $key    Event key from WP Cron
+	 */
+	private function print_cron_args( $value, $key ) {
+		echo wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value ) . '<br />';
 	}
 }
 
