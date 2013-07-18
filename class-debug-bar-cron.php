@@ -218,7 +218,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					echo '<td valign="top">';
 					if ( ! empty( $info['args'] ) ) {
 						foreach ( $info['args'] as $key => $value ) {
-							echo wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value ) . '<br />';
+					  		$this->display_cron_arguments( $key, $value );
 						}
 					} else {
 						echo 'No Args';
@@ -232,6 +232,34 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		}
 
 		echo '</table>';
+	}
+
+	
+	/**
+	 * Displays the cron arguments in a readable format.
+	 *
+	 * @param   int|string     $key        Key of the array element.
+	 * @param   mixed 		   $value      Cron argument(s).
+	 * @param   int            $depth      Current recursion depth.
+	 * @return  void
+	 */
+	function display_cron_arguments( $key, $value, $depth = 0 ) {
+		if( is_string( $value ) ) {
+			echo str_repeat( '&nbsp;', ( $depth * 2 ) ) . wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value ) . '<br />';
+		}
+		else if( is_array( $value ) ) {
+			if( count( $value ) > 0 ) {
+				echo str_repeat( '&nbsp;', ( $depth * 2 ) ) . wp_strip_all_tags( $key ) . ' => array(<br />';
+				$depth++;
+				foreach( $value as $k => $v ) {
+					$this->display_cron_arguments( $k, $v, $depth );
+				}
+				echo str_repeat( '&nbsp;', ( ( $depth - 1 ) * 2 ) ) . ')';
+			}
+			else {
+				echo 'Empty Array';
+			}
+		}
 	}
 
 	/**
