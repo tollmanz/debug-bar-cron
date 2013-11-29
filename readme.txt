@@ -43,6 +43,7 @@ Yes
 == Changelog ==
 
 * Fixed 'Array to string conversion' error when Cron job arguments are in a multi-dimensional array - props [Jrf](http://profiles.wordpress.org/jrf).
+* Fixed a number of HTML validation errors - props [Jrf](http://profiles.wordpress.org/jrf).
 
 = 0.1.2 =
 * Added indicators for missed events
