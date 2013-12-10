@@ -215,10 +215,12 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 					// Report the args
 					echo '<td>';
-					if ( ! empty( $info['args'] ) ) {
+					if ( is_array( $info['args'] ) && $info['args'] !== array() ) {
 						foreach ( $info['args'] as $key => $value ) {
-					  		$this->display_cron_arguments( $key, $value );
+							$this->display_cron_arguments( $key, $value );
 						}
+					} else if( is_string( $info['args'] ) && $info['args'] !== '' ) {
+						echo wp_strip_all_tags( $info['args'] );
 					} else {
 						echo 'No Args';
 					}
