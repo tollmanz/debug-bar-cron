@@ -215,7 +215,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 
 					// Report the args
 					echo '<td>';
-					if ( is_array( $info['args'] ) && $info['args'] !== array() ) {
+					if ( is_array( $info['args'] ) && ! empty( $info['args'] ) ) {
 						foreach ( $info['args'] as $key => $value ) {
 							$this->display_cron_arguments( $key, $value );
 						}
