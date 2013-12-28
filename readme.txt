@@ -4,7 +4,7 @@ Donate Link: http://wordpress.org
 Tags: debug bar, cron
 Requires at least: 3.3
 Tested up to: trunk
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 
 Debug Bar Cron adds a new panel to Debug Bar that displays information about WP scheduled events.
 
@@ -41,6 +41,8 @@ Yes
 1. The Debug Bar Cron panel
 
 == Changelog ==
+
+= 0.1.3 =
 
 * Fixed 'Array to string conversion' error when Cron job arguments are in a multi-dimensional array - props [Jrf](http://profiles.wordpress.org/jrf), [ethitter](http://profiles.wordpress.org/ethitter), and [mintindeed](http://profiles.wordpress.org/mintindeed).
 * Fixed a number of HTML validation errors - props [Jrf](http://profiles.wordpress.org/jrf).
