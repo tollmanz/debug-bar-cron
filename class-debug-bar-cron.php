@@ -220,7 +220,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 							$this->display_cron_arguments( $key, $value );
 						}
 					} else if ( is_string( $info['args'] ) && $info['args'] !== '' ) {
-						echo wp_strip_all_tags( $info['args'] );
+						echo esc_html( $info['args'] );
 					} else {
 						echo 'No Args';
 					}
@@ -246,7 +246,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 */
 	function display_cron_arguments( $key, $value, $depth = 0 ) {
 		if ( is_string( $value ) ) {
-			echo str_repeat( '&nbsp;', ( $depth * 2 ) ) . wp_strip_all_tags( $key ) . ' => ' . wp_strip_all_tags( $value ) . '<br />';
+			echo str_repeat( '&nbsp;', ( $depth * 2 ) ) . wp_strip_all_tags( $key ) . ' => ' . esc_html( $value ) . '<br />';
 		} else if ( is_array( $value ) ) {
 			if ( count( $value ) > 0 ) {
 				echo str_repeat( '&nbsp;', ( $depth * 2 ) ) . wp_strip_all_tags( $key ) . ' => array(<br />';
