@@ -245,7 +245,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 * @return  void
 	 */
 	function display_cron_arguments( $key, $value, $depth = 0 ) {
-		if ( is_string( $value ) ) {
+		if ( is_string( $value ) || is_int( $value ) ) {
 			echo str_repeat( '&nbsp;', ( $depth * 2 ) ) . wp_strip_all_tags( $key ) . ' => ' . esc_html( $value ) . '<br />';
 		} else if ( is_array( $value ) ) {
 			if ( count( $value ) > 0 ) {
