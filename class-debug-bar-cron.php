@@ -81,7 +81,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		$this->_doing_cron = get_transient( 'doing_cron' ) ? __( 'Yes', 'zt-debug-bar-cron' ) : __( 'No', 'zt-debug-bar-cron' );
 
 		// Get the time of the next event
-		$cron_times = array_keys( $this->_crons );
+		$cron_times = ( is_array( $this->_crons ) ? array_keys( $this->_crons ) : array() );
 		$unix_time_next_cron = $cron_times[0];
 		$time_next_cron = date( 'Y-m-d H:i:s', $unix_time_next_cron );
 

@@ -42,6 +42,9 @@ Yes
 
 == Changelog ==
 
+= Trunk =
+* Fix PHP notice in the rare situation that no cron schedules would be defined as reported by [danielbachhuber](https://github.com/danielbachhuber).
+
 = 0.1.3 =
 
 * Fixed 'Array to string conversion' error when Cron job arguments are in a multi-dimensional array - props [Jrf](http://profiles.wordpress.org/jrf), [ethitter](http://profiles.wordpress.org/ethitter), and [mintindeed](http://profiles.wordpress.org/mintindeed).
