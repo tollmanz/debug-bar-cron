@@ -42,6 +42,10 @@ Yes
 
 == Changelog ==
 
+= Trunk =
+
+* Updated Core cron events list - props [Jrf](http://profiles.wordpress.org/jrf).
+
 = 0.1.3 =
 
 * Fixed 'Array to string conversion' error when Cron job arguments are in a multi-dimensional array - props [Jrf](http://profiles.wordpress.org/jrf), [ethitter](http://profiles.wordpress.org/ethitter), and [mintindeed](http://profiles.wordpress.org/mintindeed).

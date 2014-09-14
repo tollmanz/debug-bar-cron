@@ -138,15 +138,16 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		// Lists all crons that are defined in WP Core
 		$core_cron_hooks = array(
 			'wp_scheduled_delete',
+			'wp_scheduled_auto_draft_delete',
+			'update_network_counts',
 			'upgrader_scheduled_cleanup',
 			'importer_scheduled_cleanup',
 			'publish_future_post',
-			'akismet_schedule_cron_recheck',
-			'akismet_scheduled_delete',
 			'do_pings',
 			'wp_version_check',
 			'wp_update_plugins',
-			'wp_update_themes'
+			'wp_update_themes',
+			'wp_maybe_auto_update',
 		);
 
 		// Sort and count crons
