@@ -6,6 +6,7 @@ Description: Adds information about WP scheduled events to Debug Bar.
 Author: Zack Tollman, Helen Hou-Sandi
 Version: 0.1.2
 Author URI: http://github.com/tollmanz
+Depends: Debug Bar
 */
 
 /**
