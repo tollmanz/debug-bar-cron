@@ -177,7 +177,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		// Sort and count crons
 		foreach ( $this->_crons as $time => $time_cron_array ) {
 			foreach ( $time_cron_array as $hook => $data ) {
-				$this->_total_crons++;
+				$this->_total_crons += count($data);
 
 				if ( in_array( $hook, $core_cron_hooks ) )
 					$this->_core_crons[ $time ][ $hook ] = $data;
