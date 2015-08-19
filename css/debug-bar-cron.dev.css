@@ -50,3 +50,22 @@
 .zt-debug-bar-cron-event-table thead th.col4 {
 	width: 120px;
 }
+
+.zt-debug-bar-cron-event-table td.hook a:focus,
+.zt-debug-bar-cron-event-table td.hook a:active {
+-webkit-box-shadow:none;
+		box-shadow:none;
+}
+
+.zt-debug-bar-cron-event-table td.hook a {
+	display:block; 
+	visibility:hidden;
+}
+
+.zt-debug-bar-cron-event-table td.hook:hover a {
+	visibility:visible;
+}
+
+.zt-debug-bar-cron-event-table .nobr {
+	white-space: nowrap;
+}

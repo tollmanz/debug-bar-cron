@@ -49,8 +49,11 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		$this->title( __( 'Cron', 'debug-bar' ) );
 		add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
 		add_action( 'admin_print_styles', array( $this, 'print_styles' ) );
+		
+		add_action( 'wp_footer', array( $this, 'footerjs' ), 1000 );
+		add_action( 'admin_footer', array( $this, 'footerjs' ) , 1000 );
 	}
-
+	
 	/**
 	 * Enqueue styles.
 	 *
@@ -61,6 +64,28 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		wp_enqueue_style( 'zt-debug-bar-cron', plugins_url( "css/debug-bar-cron$suffix.css", __FILE__ ), array(), '20131228' );
 	}
 
+	/**
+	 * adding js-function of ajax callback
+	 *
+	 * @return  void
+	 */
+	public function footerjs() {
+	 	echo '<script>'
+			.'jQuery(".remove_cron_job").bind("click", function(e){'
+			.'	e.preventDefault();'
+			.'	var t = jQuery(this);'
+			.'	var args = new Object();'
+			.'	args["action"] = "delete_cron_job";'
+			.'	args["hook"]   = jQuery(this).attr("data-hook");'
+			.'	args["args"]   = jQuery(this).attr("data-args");' 
+			.'	args["nonce"]  = "'.wp_create_nonce('debug_cron_nonce').'";'
+			.'	jQuery.post("'.admin_url('admin-ajax.php').'", args, function(html){'
+			.'		t.parent().parent().remove(); '
+			.'	})'	
+			.'});'
+			.'</script>';
+	}
+	
 	/**
 	 * Show the menu item in Debug Bar.
 	 *
@@ -178,8 +203,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		echo '<thead><tr>';
 		echo '<th class="col1">' . __( 'Next Execution', 'zt-debug-bar-cron' ) . '</th>';
 		echo '<th class="col2">' . __( 'Hook', 'zt-debug-bar-cron' ) . '</th>';
-		echo '<th class="col3">' . __( 'Interval Hook', 'zt-debug-bar-cron' ) . '</th>';
-		echo '<th class="col4">' . __( 'Interval Value', 'zt-debug-bar-cron' ) . '</th>';
+		echo '<th class="col3 nobr">' . __( 'Interval Hook', 'zt-debug-bar-cron' ) . '</th>';
+		echo '<th class="col4 nobr">' . __( 'Interval Value', 'zt-debug-bar-cron' ) . '</th>';
 		echo '<th class="col5">' . __( 'Args', 'zt-debug-bar-cron' ) . '</th>';
 		echo '</tr></thead>';
 		echo '<tbody>';
@@ -200,7 +225,10 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 						echo date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . $this->display_past_time( $time );
 					
 					echo '</td>';
-					echo '<td>' . wp_strip_all_tags( $hook ) . '</td>';
+					echo '<td class="hook">' . wp_strip_all_tags( $hook );
+					echo '<a href="#" data-hook="'.wp_strip_all_tags( $hook ).'" data-args=\''.(empty( $info['args'] ) ? '' : serialize($info['args'])).'\' class="remove_cron_job">remove</a>';
+					
+					echo  '</td>';
 					// Report the schedule
 					echo '<td>';
 					if ( $info['schedule'] )
@@ -210,7 +238,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					echo '</td>';
 					
 					// Report the interval
-					echo '<td>';
+					echo '<td class="nobr">';
 					if ( isset( $info['interval'] ) ) {
 						echo wp_strip_all_tags( $info['interval'] ) . 's<br />';
 						echo $info['interval'] / 60 . 'm<br />';
