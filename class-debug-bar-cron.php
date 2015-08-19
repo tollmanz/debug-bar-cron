@@ -183,17 +183,24 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		echo '<th class="col5">' . __( 'Args', 'zt-debug-bar-cron' ) . '</th>';
 		echo '</tr></thead>';
 		echo '<tbody>';
-
+		
+		$prev_time = 0;
 		foreach ( $events as $time => $time_cron_array ) {
+			
 			foreach ( $time_cron_array as $hook => $data ) {
 				// Add a class if past current time
 				$times_class = time() > $time && 'No' == $this->_doing_cron ? ' class="past"' : '';
-
-				echo '<tr>';
-				echo '<td' . $times_class . '>' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . $this->display_past_time( $time ) . '</td>';
-				echo '<td>' . wp_strip_all_tags( $hook ) . '</td>';
-
+				
+				
 				foreach ( $data as $hash => $info ) {
+						
+					echo '<tr>';
+					echo '<td' . $times_class . '>';
+					if ($prev_time !=  $time)
+						echo date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . $this->display_past_time( $time );
+					
+					echo '</td>';
+					echo '<td>' . wp_strip_all_tags( $hook ) . '</td>';
 					// Report the schedule
 					echo '<td>';
 					if ( $info['schedule'] )
@@ -201,7 +208,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					else
 						echo 'Single Event';
 					echo '</td>';
-
+					
 					// Report the interval
 					echo '<td>';
 					if ( isset( $info['interval'] ) ) {
@@ -225,9 +232,12 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 						echo 'No Args';
 					}
 					echo '</td>';
-				}
 
-				echo '</tr>';
+					echo '</tr>';
+					
+					
+					$prev_time = $time;
+				}
 			}
 		}
 
