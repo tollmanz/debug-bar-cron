@@ -1,5 +1,5 @@
 === Debug Bar Cron ===
-Contributors: tollmanz, helen, 10up
+Contributors: tollmanz, helen, 10up, butuzov
 Donate Link: http://wordpress.org
 Tags: debug bar, cron
 Requires at least: 3.3
