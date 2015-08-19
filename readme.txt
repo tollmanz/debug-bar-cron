@@ -4,7 +4,7 @@ Donate Link: http://wordpress.org
 Tags: debug bar, cron
 Requires at least: 3.3
 Tested up to: trunk
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 
 Debug Bar Cron adds a new panel to Debug Bar that displays information about WP scheduled events.
 
@@ -44,6 +44,12 @@ Yes
 
 = Trunk =
 * Fix compatibility with the [Plugin Dependencies](http://wordpress.org/plugins/plugin-dependencies/) plugin
+
+= 0.1.4 =
+
+* Added functionality to delete ( unscheldule ) cron-event while you viewing a events array
+* View for events changed to hold events in few rows if they happening same-time.
+* @bugfix - Correct cron events number in "Total Events"
 
 = 0.1.3 =
 
