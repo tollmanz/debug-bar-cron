@@ -9,6 +9,23 @@ Author URI: http://github.com/tollmanz
 Depends: Debug Bar
 */
 
+if ( ! function_exists( 'debug_bar_cron_has_parent_plugin' ) ) {
+	/**
+	 * Show admin notice & de-activate if debug-bar plugin not active.
+	 */
+	function debug_bar_cron_has_parent_plugin() {
+		if ( is_admin() && ( ! class_exists( 'Debug_Bar' ) && current_user_can( 'activate_plugins' ) ) ) {
+			add_action( 'admin_notices', create_function( null, 'echo \'<div class="error"><p>\' . sprintf( __( \'Activation failed: Debug Bar must be activated to use the <strong>Debug Bar Cron</strong> Plugin. %sVisit your plugins page to activate.\', \'zt-debug-bar-cron\' ), \'<a href="\' . esc_url( admin_url( \'plugins.php#debug-bar\' ) ) . \'">\' ) . \'</a></p></div>\';' ) );
+
+			deactivate_plugins( plugin_basename( __FILE__ ) );
+			if ( isset( $_GET['activate'] ) ) {
+				unset( $_GET['activate'] );
+			}
+		}
+	}
+	add_action( 'admin_init', 'debug_bar_cron_has_parent_plugin' );
+}
+
 /**
  * Adds panel, as defined in the included class, to Debug Bar.
  *
