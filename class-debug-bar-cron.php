@@ -40,13 +40,15 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 */
 	private $_doing_cron = 'No';
 
+
 	/**
 	 * Give the panel a title and set the enqueues.
 	 *
 	 * @return void
 	 */
 	public function init() {
-		$this->title( __( 'Cron', 'debug-bar' ) );
+		load_plugin_textdomain( 'zt-debug-bar-cron', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		$this->title( __( 'Cron', 'zt-debug-bar-cron' ) );
 		add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
 		add_action( 'admin_print_styles', array( $this, 'print_styles' ) );
 	}
@@ -93,7 +95,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 		echo '<div class="debug-bar-cron">';
 		echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>' . (int) $this->_total_crons . '</h2>';
 		echo '<h2><span>' . __( 'Doing Cron', 'zt-debug-bar-cron' ) . ':</span>' . $this->_doing_cron . '</h2>';
-		echo '<h2 class="times' . esc_attr( $times_class ) . '"><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>' . $time_next_cron . '<br />' . $unix_time_next_cron . '<br />' . $human_time_next_cron . $this->display_past_time( $unix_time_next_cron ) . '</h2>';
+		echo '<h2 class="times' . esc_attr( $times_class ) . '"><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>' . $time_next_cron . '<br />' . $unix_time_next_cron . '<br />' . $this->display_past_time( $human_time_next_cron, $unix_time_next_cron ) . '</h2>';
 		echo '<h2><span>' . __( 'Current Time', 'zt-debug-bar-cron' ) . ':</span>' . date( 'H:i:s' ) . '</h2>';
 		echo '<div class="clear"></div>';
 
@@ -193,7 +195,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 				$times_class = time() > $time && 'No' == $this->_doing_cron ? ' class="past"' : '';
 
 				echo '<tr>';
-				echo '<td' . $times_class . '>' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . human_time_diff( $time ) . $this->display_past_time( $time ) . '</td>';
+				echo '<td' . $times_class . '>' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . $this->display_past_time( human_time_diff( $time ), $time ) . '</td>';
 				echo '<td>' . wp_strip_all_tags( $hook ) . '</td>';
 
 				foreach ( $data as $hash => $info ) {
@@ -202,17 +204,20 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					if ( $info['schedule'] )
 						echo wp_strip_all_tags( $info['schedule'] );
 					else
-						echo 'Single Event';
+						echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
 					echo '</td>';
 
 					// Report the interval
 					echo '<td>';
 					if ( isset( $info['interval'] ) ) {
-						echo wp_strip_all_tags( $info['interval'] ) . 's<br />';
-						echo $info['interval'] / 60 . 'm<br />';
-						echo $info['interval'] / ( 60  * 60 ). 'h';
+						/* TRANSLATORS: %s is number of seconds. */
+						printf( esc_html__( '%ss', 'zt-debug-bar-cron' ) . '<br />', wp_strip_all_tags( $info['interval'] ) );
+						/* TRANSLATORS: %s is number of minutes. */
+						printf( esc_html__( '%sm', 'zt-debug-bar-cron' ) . '<br />', ( wp_strip_all_tags( $info['interval'] ) / 60 ) );
+						/* TRANSLATORS: %s is number of hours. */
+						printf( esc_html__( '%sh', 'zt-debug-bar-cron' ), ( wp_strip_all_tags( $info['interval'] ) / ( 60 * 60 ) ) );
 					} else {
-						echo 'Single Event';
+						echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
 					}
 					echo '</td>';
 
@@ -225,7 +230,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 					} else if ( is_string( $info['args'] ) && $info['args'] !== '' ) {
 						echo esc_html( $info['args'] );
 					} else {
-						echo 'No Args';
+						echo esc_html__( 'No Args', 'zt-debug-bar-cron' );
 					}
 					echo '</td>';
 				}
@@ -259,7 +264,7 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 				}
 				echo str_repeat( '&nbsp;', ( ( $depth - 1 ) * 2 ) ) . ')';
 			} else {
-				echo 'Empty Array';
+				echo esc_html( 'Empty Array', 'zt-debug-bar-cron' );
 			}
 		}
 	}
@@ -295,12 +300,19 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	}
 
 	/**
-	 * Compares time with current time and outputs 'ago' if current time is greater that even time.
+	 * Compares time with current time and adds ' ago' if current time is greater than event time.
 	 *
-	 * @param   int     $time   Unix time of event.
+	 * @param string $human_time Human readable time difference.
+	 * @param int    $time       Unix time of event.
+	 *
 	 * @return  string
 	 */
-	private function display_past_time( $time ) {
-		return time() > $time ? ' ' . __( 'ago', 'zt-debug-bar-cron' ) : '';
+	private function display_past_time( $human_time, $time ) {
+		if ( time() > $time ) {
+			/* TRANSLATORS: %s is a human readable time difference. */
+			return sprintf( esc_html__( '%s ago', 'zt-debug-bar-cron' ), $human_time );
+		} else {
+			return $human_time;
+		}
 	}
 }
