@@ -46,7 +46,8 @@ class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	 * @return void
 	 */
 	public function init() {
-		$this->title( __( 'Cron', 'debug-bar' ) );
+		load_plugin_textdomain( 'zt-debug-bar-cron', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		$this->title( __( 'Cron', 'zt-debug-bar-cron' ) );
 		add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
 		add_action( 'admin_print_styles', array( $this, 'print_styles' ) );
 	}
