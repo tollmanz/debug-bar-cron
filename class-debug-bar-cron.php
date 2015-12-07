@@ -17,6 +17,10 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 	 */
 	class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
 	
+		const DBCRON_STYLES_VERSION = '1.0';
+	
+		const DBCRON_NAME = 'debug-bar-cron';
+
 		/**
 		 * Holds all of the cron events.
 		 *
@@ -61,8 +65,8 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		public function init() {
 			load_plugin_textdomain( 'zt-debug-bar-cron', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 			$this->title( __( 'Cron', 'zt-debug-bar-cron' ) );
-			add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
-			add_action( 'admin_print_styles', array( $this, 'print_styles' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		}
 
 		/**
@@ -70,9 +74,15 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 *
 		 * @return  void
 		 */
-		public function print_styles() {
-			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '.dev' : '';
-			wp_enqueue_style( 'zt-debug-bar-cron', plugins_url( "css/debug-bar-cron$suffix.css", __FILE__ ), array(), '20131228' );
+		public function enqueue_scripts_styles() {
+			$suffix = ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min' );
+	
+			wp_enqueue_style(
+				self::DBCRON_NAME,
+				plugins_url( 'css/' . self::DBCRON_NAME . $suffix . '.css', __FILE__ ),
+				array( 'debug-bar' ),
+				self::DBCRON_STYLES_VERSION
+			);
 		}
 
 		/**
