@@ -126,6 +126,15 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			// Add a class if past current time and doing cron is not running.
 			$times_class = ( time() > $unix_time_next_cron && 'No' === $this->_doing_cron ) ? ' past' : '';
 
+			if ( ! class_exists( 'Debug_Bar_Pretty_Output' ) ) {
+				require_once plugin_dir_path( __FILE__ ) . 'inc/debug-bar-pretty-output/class-debug-bar-pretty-output.php';
+			}
+
+			// Limit recursion depth if possible - method available since DBPO v1.4.
+			if ( method_exists( 'Debug_Bar_Pretty_Output', 'limit_recursion' ) ) {
+				Debug_Bar_Pretty_Output::limit_recursion( 2 );
+			}
+
 			echo '
 			<div class="debug-bar-cron">
 				<h2><span>', esc_html__( 'Total Events', 'zt-debug-bar-cron' ), ':</span>', intval( $this->_total_crons ), '</h2>
@@ -165,6 +174,11 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 			echo '
 			</div>';
+
+			// Unset recursion depth limit if possible - method available since DBPO v1.4.
+			if ( method_exists( 'Debug_Bar_Pretty_Output', 'unset_recursion_limit' ) ) {
+				Debug_Bar_Pretty_Output::unset_recursion_limit();
+			}
 		}
 
 
@@ -291,15 +305,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 						// Report the args.
 						echo '
 							<td>';
-						if ( is_array( $info['args'] ) && ! empty( $info['args'] ) ) {
-							foreach ( $info['args'] as $key => $value ) {
-								$this->display_cron_arguments( $key, $value );
-							}
-						} else if ( is_string( $info['args'] ) && '' !== $info['args'] ) {
-							echo esc_html( $info['args'] );
-						} else {
-							echo esc_html__( 'No Args', 'zt-debug-bar-cron' );
-						}
+						$this->display_cron_arguments( $info['args'] );
 						echo '</td>';
 					}
 
@@ -317,26 +323,24 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		/**
 		 * Displays the cron arguments in a readable format.
 		 *
-		 * @param int|string $key   Key of the array element.
-		 * @param mixed      $value Cron argument(s).
-		 * @param int        $depth Current recursion depth.
+		 * @param mixed $args Cron argument(s).
 		 *
 		 * @return void
 		 */
-		function display_cron_arguments( $key, $value, $depth = 0 ) {
-			if ( is_string( $value ) || is_int( $value ) ) {
-				echo str_repeat( '&nbsp;', ( $depth * 2 ) ) . wp_strip_all_tags( $key ) . ' => ' . esc_html( $value ) . '<br />';
-			} else if ( is_array( $value ) ) {
-				if ( count( $value ) > 0 ) {
-					echo str_repeat( '&nbsp;', ( $depth * 2 ) ) . wp_strip_all_tags( $key ) . ' => array(<br />';
-					$depth++;
-					foreach ( $value as $k => $v ) {
-						$this->display_cron_arguments( $k, $v, $depth );
-					}
-					echo str_repeat( '&nbsp;', ( ( $depth - 1 ) * 2 ) ) . ')';
-				} else {
-					echo esc_html( 'Empty Array', 'zt-debug-bar-cron' );
-				}
+		private function display_cron_arguments( $args ) {
+			// Arguments defaults to an empty array if no arguments are given.
+			if ( is_array( $args ) && array() === $args ) {
+				echo esc_html__( 'No Args', 'zt-debug-bar-cron' );
+				return;
+			}
+
+			// Ok, we have an argument, let's pretty print it.
+			if ( defined( 'Debug_Bar_Pretty_Output::VERSION' ) ) {
+				echo Debug_Bar_Pretty_Output::get_output( $args, '', true ); // WPCS: XSS ok.
+			} else {
+				// An old version of the pretty output class was loaded.
+				// Real possibility as there are several DB plugins using the pretty print class.
+				Debug_Bar_Pretty_Output::output( $args, '', true );
 			}
 		}
 
