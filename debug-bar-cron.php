@@ -33,17 +33,20 @@ if ( ! function_exists( 'debug_bar_cron_has_parent_plugin' ) ) {
 	add_action( 'admin_init', 'debug_bar_cron_has_parent_plugin' );
 }
 
-/**
- * Adds panel, as defined in the included class, to Debug Bar.
- *
- * @param $panels array
- * @return array
- */
-function zt_add_debug_bar_cron_panel( $panels ) {
-	if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) ) {
-		include ( 'class-debug-bar-cron.php' );
-		$panels[] = new ZT_Debug_Bar_Cron();
+
+if ( ! function_exists( 'zt_add_debug_bar_cron_panel' ) ) {
+	/**
+	 * Adds panel, as defined in the included class, to Debug Bar.
+	 *
+	 * @param array $panels
+	 * @return array
+	 */
+	function zt_add_debug_bar_cron_panel( $panels ) {
+		if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) ) {
+			require_once 'class-debug-bar-cron.php';
+			$panels[] = new ZT_Debug_Bar_Cron();
+		}
+		return $panels;
 	}
-	return $panels;
+	add_filter( 'debug_bar_panels', 'zt_add_debug_bar_cron_panel' );
 }
-add_filter( 'debug_bar_panels', 'zt_add_debug_bar_cron_panel' );
