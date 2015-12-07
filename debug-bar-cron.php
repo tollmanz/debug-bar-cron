@@ -1,13 +1,24 @@
 <?php
-/*
-Plugin Name: Debug Bar Cron
-Plugin URI: http://github.com/tollmanz/
-Description: Adds information about WP scheduled events to Debug Bar.
-Author: Zack Tollman, Helen Hou-Sandi
-Version: 0.1.2
-Author URI: http://github.com/tollmanz
-Depends: Debug Bar
-*/
+/**
+ * Debug Bar Cron, a WordPress plugin.
+ *
+ * @package     WordPress\Plugins\Debug Bar Cron
+ * @author      Zack Tollman, Helen Hou-Sandi, Juliette Reinders Folmer
+ * @link        https://github.com/tollmanz/debug-bar-cron
+ * @version     0.1.2
+ * @license     http://creativecommons.org/licenses/GPL/2.0/ GNU General Public License, version 2 or higher
+ *
+ * @wordpress-plugin
+ * Plugin Name:	Debug Bar Cron
+ * Plugin URI:	http://wordpress.org/extend/plugins/debug-bar-cron/
+ * Description:	Debug Bar Cron adds information about WP scheduled events to the Debug Bar.
+ * Version:		0.1.2
+ * Author:		Zack Tollman, Helen Hou-Sandi
+ * Author URI:	http://github.com/tollmanz/
+ * Depends:     Debug Bar
+ * Text Domain:	zt-debug-bar-cron
+ * Domain Path:	/languages/
+ */
 
 // Avoid direct calls to this file.
 if ( ! function_exists( 'add_action' ) ) {
@@ -38,7 +49,8 @@ if ( ! function_exists( 'zt_add_debug_bar_cron_panel' ) ) {
 	/**
 	 * Adds panel, as defined in the included class, to Debug Bar.
 	 *
-	 * @param array $panels
+	 * @param array $panels Existing debug bar panels.
+	 *
 	 * @return array
 	 */
 	function zt_add_debug_bar_cron_panel( $panels ) {

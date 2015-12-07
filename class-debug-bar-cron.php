@@ -1,4 +1,13 @@
 <?php
+/**
+ * Debug Bar Cron - Debug Bar Panel.
+ *
+ * @package     WordPress\Plugins\Debug Bar Cron
+ * @author      Zack Tollman, Helen Hou-Sandi, Juliette Reinders Folmer
+ * @link        https://github.com/tollmanz/debug-bar-cron
+ * @version     0.1.2
+ * @license     http://creativecommons.org/licenses/GPL/2.0/ GNU General Public License, version 2 or higher
+ */
 
 // Avoid direct calls to this file.
 if ( ! function_exists( 'add_action' ) ) {
@@ -16,9 +25,9 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 	 * Add a new Debug Bar Panel.
 	 */
 	class ZT_Debug_Bar_Cron extends Debug_Bar_Panel {
-	
+
 		const DBCRON_STYLES_VERSION = '1.0';
-	
+
 		const DBCRON_NAME = 'debug-bar-cron';
 
 		/**
@@ -34,7 +43,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 * @var array
 		 */
 		private $_core_crons;
-	
+
 		/**
 		 * Holds the cron events created by plugins or themes.
 		 *
@@ -43,15 +52,15 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		private $_user_crons;
 
 		/**
-		 * Total number of cron events
+		 * Total number of cron events.
 		 *
 		 * @var int
 		 */
 		private $_total_crons = 0;
 
-		/**   
+		/**
 		 * Whether cron is being executed or not.
-		 * 
+		 *
 		 * @var string
 		 */
 		private $_doing_cron = 'No';
@@ -69,14 +78,15 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		}
 
+
 		/**
 		 * Enqueue styles.
 		 *
-		 * @return  void
+		 * @return void
 		 */
 		public function enqueue_scripts_styles() {
 			$suffix = ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min' );
-	
+
 			wp_enqueue_style(
 				self::DBCRON_NAME,
 				plugins_url( 'css/' . self::DBCRON_NAME . $suffix . '.css', __FILE__ ),
@@ -85,82 +95,85 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			);
 		}
 
+
 		/**
 		 * Show the menu item in Debug Bar.
 		 *
-		 * @return  void
+		 * @return void
 		 */
 		public function prerender() {
 			$this->set_visible( true );
 		}
 
+
 		/**
 		 * Show the contents of the page.
-	
-		 * @return  void
+		 *
+		 * @return void
 		 */
 		public function render() {
 			$this->get_crons();
-	
+
 			$this->_doing_cron = get_transient( 'doing_cron' ) ? __( 'Yes', 'zt-debug-bar-cron' ) : __( 'No', 'zt-debug-bar-cron' );
-	
-			// Get the time of the next event
+
+			// Get the time of the next event.
 			$cron_times = ( is_array( $this->_crons ) ? array_keys( $this->_crons ) : array() );
 			$unix_time_next_cron = $cron_times[0];
 			$time_next_cron = date( 'Y-m-d H:i:s', $unix_time_next_cron );
-	
+
 			$human_time_next_cron = human_time_diff( $unix_time_next_cron );
-	
-			// Add a class if past current time and doing cron is not running
+
+			// Add a class if past current time and doing cron is not running.
 			$times_class = time() > $unix_time_next_cron && 'No' == $this->_doing_cron ? ' past' : '';
-	
+
 			echo '<div class="debug-bar-cron">';
 			echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>' . (int) $this->_total_crons . '</h2>';
 			echo '<h2><span>' . __( 'Doing Cron', 'zt-debug-bar-cron' ) . ':</span>' . $this->_doing_cron . '</h2>';
 			echo '<h2 class="times' . esc_attr( $times_class ) . '"><span>' . __( 'Next Event', 'zt-debug-bar-cron' ) . ':</span>' . $time_next_cron . '<br />' . $unix_time_next_cron . '<br />' . $this->display_past_time( $human_time_next_cron, $unix_time_next_cron ) . '</h2>';
 			echo '<h2><span>' . __( 'Current Time', 'zt-debug-bar-cron' ) . ':</span>' . date( 'H:i:s' ) . '</h2>';
 			echo '<div class="clear"></div>';
-	
+
 			echo '<h3>' . __( 'Custom Events', 'zt-debug-bar-cron' ) . '</h3>';
-	
+
 			if ( ! is_null( $this->_user_crons ) )
 				$this->display_events( $this->_user_crons );
 			else
 				echo '<p>' . __( 'No Custom Events scheduled.', 'zt-debug-bar-cron' ) . '</p>';
-	
+
 			echo '<h3>' . __( 'Schedules', 'zt-debug-bar-cron' ) . '</h3>';
-	
+
 			$this->display_schedules();
-	
+
 			echo '<h3>' . __( 'Core Events', 'zt-debug-bar-cron' ) . '</h3>';
-	
+
 			if ( ! is_null( $this->_core_crons ) )
 				$this->display_events( $this->_core_crons );
 			else
 				echo '<p>' . __( 'No Core Events scheduled.', 'zt-debug-bar-cron' ) . '</p>';
-	
+
 			echo '</div>';
 		}
-	
+
+
 		/**
 		 * Gets all of the cron jobs.
 		 *
 		 * This function sorts the cron jobs into core crons, and custom crons. It also tallies
 		 * a total count for the crons as this number is otherwise tough to get.
 		 *
-		 * @return  array   Array of crons.
+		 * @return array Array of crons.
 		 */
 		private function get_crons() {
 			if ( ! is_null( $this->_crons ) )
 				return $this->_crons;
-	
+
 			if ( ! $crons = _get_cron_array() )
 				return $this->_crons;
-	
+
 			$this->_crons = $crons;
-	
-		// Lists all crons that are defined in WP Core.
-		// @internal To find all, search WP trunk for `wp_schedule_(single_)?event`.
+
+			// Lists all crons that are defined in WP Core.
+			// @internal To find all, search WP trunk for `wp_schedule_(single_)?event`.
 			$core_cron_hooks = array(
 				'do_pings',
 				'importer_scheduled_cleanup',     // WP 3.1+.
@@ -175,32 +188,34 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 				'wp_update_themes',
 				'wp_version_check',
 			);
-	
-			// Sort and count crons
+
+			// Sort and count crons.
 			foreach ( $this->_crons as $time => $time_cron_array ) {
 				foreach ( $time_cron_array as $hook => $data ) {
 					$this->_total_crons++;
-	
+
 					if ( in_array( $hook, $core_cron_hooks ) )
 						$this->_core_crons[ $time ][ $hook ] = $data;
 					else
 						$this->_user_crons[ $time ][ $hook ] = $data;
 				}
 			}
-	
+
 			return $this->_crons;
 		}
-	
+
+
 		/**
 		 * Displays the events in an easy to read table.
 		 *
-		 * @param   array   $events     Array of events.
-		 * @return  void|string         Void on failure; table display of events on success.
+		 * @param array $events Array of events.
+		 *
+		 * @return void|string Void on failure; table display of events on success.
 		 */
 		private function display_events( $events ) {
 			if ( is_null( $events ) || empty( $events ) )
 				return;
-	
+
 			echo '<table class="zt-debug-bar-cron-event-table" cellspacing="0">';
 			echo '<thead><tr>';
 			echo '<th class="col1">' . __( 'Next Execution', 'zt-debug-bar-cron' ) . '</th>';
@@ -210,26 +225,26 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			echo '<th class="col5">' . __( 'Args', 'zt-debug-bar-cron' ) . '</th>';
 			echo '</tr></thead>';
 			echo '<tbody>';
-	
+
 			foreach ( $events as $time => $time_cron_array ) {
 				foreach ( $time_cron_array as $hook => $data ) {
-					// Add a class if past current time
+					// Add a class if past current time.
 					$times_class = time() > $time && 'No' == $this->_doing_cron ? ' class="past"' : '';
-	
+
 					echo '<tr>';
 					echo '<td' . $times_class . '>' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . $this->display_past_time( human_time_diff( $time ), $time ) . '</td>';
 					echo '<td>' . wp_strip_all_tags( $hook ) . '</td>';
-	
+
 					foreach ( $data as $hash => $info ) {
-						// Report the schedule
+						// Report the schedule.
 						echo '<td>';
 						if ( $info['schedule'] )
 							echo wp_strip_all_tags( $info['schedule'] );
 						else
 						echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
 						echo '</td>';
-	
-						// Report the interval
+
+						// Report the interval.
 						echo '<td>';
 						if ( isset( $info['interval'] ) ) {
 							/* TRANSLATORS: %s is number of seconds. */
@@ -242,8 +257,8 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 							echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
 						}
 						echo '</td>';
-	
-						// Report the args
+
+						// Report the args.
 						echo '<td>';
 						if ( is_array( $info['args'] ) && ! empty( $info['args'] ) ) {
 							foreach ( $info['args'] as $key => $value ) {
@@ -256,23 +271,24 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 						}
 						echo '</td>';
 					}
-	
+
 					echo '</tr>';
 				}
 			}
-	
+
 			echo '</tbody>';
 			echo '</table>';
 		}
-	
-		
+
+
 		/**
 		 * Displays the cron arguments in a readable format.
 		 *
-		 * @param   int|string     $key        Key of the array element.
-		 * @param   mixed          $value      Cron argument(s).
-		 * @param   int            $depth      Current recursion depth.
-		 * @return  void
+		 * @param int|string $key   Key of the array element.
+		 * @param mixed      $value Cron argument(s).
+		 * @param int        $depth Current recursion depth.
+		 *
+		 * @return void
 		 */
 		function display_cron_arguments( $key, $value, $depth = 0 ) {
 			if ( is_string( $value ) || is_int( $value ) ) {
@@ -290,11 +306,12 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 				}
 			}
 		}
-	
+
+
 		/**
 		 * Displays all of the schedules defined.
 		 *
-		 * @return  void
+		 * @return void
 		 */
 		private function display_schedules() {
 			echo '<table class="zt-debug-bar-cron-event-table" cellspacing="0">';
@@ -306,7 +323,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			echo '<th class="col5">' . __( 'Display Name', 'zt-debug-bar-cron' ) . '</th>';
 			echo '</tr></thead>';
 			echo '<tbody>';
-	
+
 			foreach ( wp_get_schedules() as $interval_hook => $data ) {
 				echo '<tr>';
 				echo '<td>' . esc_html( $interval_hook ) . '</td>';
@@ -316,18 +333,19 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 				echo '<td>' . esc_html( $data['display'] ) . '</td>';
 				echo '</tr>';
 			}
-	
+
 			echo '</tbody>';
 			echo '</table>';
 		}
-	
+
+
 		/**
 		 * Compares time with current time and adds ' ago' if current time is greater than event time.
 		 *
 		 * @param string $human_time Human readable time difference.
 		 * @param int    $time       Unix time of event.
 		 *
-		 * @return  string
+		 * @return string
 		 */
 		private function display_past_time( $human_time, $time ) {
 			if ( time() > $time ) {
