@@ -260,14 +260,14 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 								', intval( $time ), '<br />
 								', esc_html( $this->display_past_time( human_time_diff( $time ), $time ) ), '
 							</td>
-							<td>', esc_html( wp_strip_all_tags( $hook ) ), '</td>';
+							<td>', esc_html( $hook ), '</td>';
 
 					foreach ( $data as $hash => $info ) {
 						// Report the schedule.
 						echo '
 							<td>';
 						if ( $info['schedule'] ) {
-							echo esc_html( wp_strip_all_tags( $info['schedule'] ) );
+							echo esc_html( $info['schedule'] );
 						} else {
 							echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
 						}
