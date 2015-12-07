@@ -59,6 +59,20 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		private $_total_crons = 0;
 
 		/**
+		 * Total number of cron events created by plugins and themes.
+		 *
+		 * @var int
+		 */
+		private $_total_user_crons = 0;
+
+		/**
+		 * Total number of WP core cron events.
+		 *
+		 * @var int
+		 */
+		private $_total_core_crons = 0;
+
+		/**
 		 * Whether cron is being executed or not.
 		 *
 		 * @var string
@@ -138,6 +152,8 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			echo '
 			<div class="debug-bar-cron">
 				<h2><span>', esc_html__( 'Total Events', 'zt-debug-bar-cron' ), ':</span>', intval( $this->_total_crons ), '</h2>
+				<h2><span>', esc_html__( 'Core Events', 'zt-debug-bar-cron' ), ':</span>', intval( $this->_total_core_crons ), '</h2>
+				<h2><span>', esc_html__( 'Custom Events', 'zt-debug-bar-cron' ), ':</span>', intval( $this->_total_user_crons ), '</h2>
 				<h2><span>', esc_html__( 'Doing Cron', 'zt-debug-bar-cron' ), ':</span>', esc_html( $this->_doing_cron ), '</h2>
 				<h2 class="times', esc_attr( $times_class ), '"><span>', esc_html__( 'Next Event', 'zt-debug-bar-cron' ), ':</span>
 					', esc_html( $time_next_cron ), '<br />
@@ -148,6 +164,11 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 				<div class="clear"></div>
 
+				<h3>', esc_html__( 'Schedules', 'zt-debug-bar-cron' ), '</h3>';
+
+			$this->display_schedules();
+
+			echo '
 				<h3>', esc_html__( 'Custom Events', 'zt-debug-bar-cron' ), '</h3>';
 
 			if ( ! is_null( $this->_user_crons ) ) {
@@ -156,11 +177,6 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 				echo '
 				<p>', esc_html__( 'No Custom Events scheduled.', 'zt-debug-bar-cron' ), '</p>';
 			}
-
-			echo '
-				<h3>', esc_html__( 'Schedules', 'zt-debug-bar-cron' ), '</h3>';
-
-			$this->display_schedules();
 
 			echo '
 				<h3>', esc_html__( 'Core Events', 'zt-debug-bar-cron' ), '</h3>';
@@ -225,8 +241,10 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 					if ( in_array( $hook, $core_cron_hooks, true ) ) {
 						$this->_core_crons[ $time ][ $hook ] = $data;
+						$this->_total_core_crons += count( $data );
 					} else {
 						$this->_user_crons[ $time ][ $hook ] = $data;
+						$this->_total_user_crons += count( $data );
 					}
 				}
 			}
