@@ -260,23 +260,24 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 			foreach ( $events as $time => $time_cron_array ) {
 				foreach ( $time_cron_array as $hook => $data ) {
-					echo '
+					foreach ( $data as $hash => $info ) {
+						echo '
 						<tr>
 							<td';
 
-					// Add a class if past current time.
-					if ( time() > $time && 'No' === $this->_doing_cron ) {
-						echo ' class="past"';
-					}
+						// Add a class if past current time.
+						if ( time() > $time && 'No' === $this->_doing_cron ) {
+							echo ' class="past"';
+						}
 
-					echo '>
+						echo '>
 								', esc_html( date( 'Y-m-d H:i:s', $time ) ), '<br />
 								', intval( $time ), '<br />
 								', esc_html( $this->display_past_time( human_time_diff( $time ), $time ) ), '
 							</td>
 							<td>', esc_html( $hook ), '</td>';
 
-					foreach ( $data as $hash => $info ) {
+
 						// Report the schedule.
 						echo '
 							<td>';
@@ -306,11 +307,9 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 						echo '
 							<td>';
 						$this->display_cron_arguments( $info['args'] );
-						echo '</td>';
-					}
-
-					echo '
+						echo '</td>
 						</tr>';
+					}
 				}
 			}
 
