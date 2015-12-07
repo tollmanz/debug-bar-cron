@@ -234,7 +234,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			}
 
 			echo '
-				<table class="zt-debug-bar-cron-event-table" cellspacing="0">
+				<table class="zt-debug-bar-cron-event-table">
 					<thead><tr>
 						<th class="col1">', esc_html__( 'Next Execution', 'zt-debug-bar-cron' ), '</th>
 						<th class="col2">', esc_html__( 'Hook', 'zt-debug-bar-cron' ), '</th>
@@ -348,7 +348,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 */
 		private function display_schedules() {
 			echo '
-				<table class="zt-debug-bar-cron-event-table" cellspacing="0">
+				<table class="zt-debug-bar-cron-event-table">
 					<thead><tr>
 						<th class="col1">', esc_html__( 'Interval Hook', 'zt-debug-bar-cron' ), '</th>
 						<th class="col2">', esc_html__( 'Interval (S)', 'zt-debug-bar-cron' ), '</th>

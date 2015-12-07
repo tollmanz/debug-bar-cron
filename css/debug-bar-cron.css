@@ -17,6 +17,7 @@
 }
 .zt-debug-bar-cron-event-table {
 	width: 100%;
+	border-collapse: collapse;
 	border-top: 1px solid #dfdfdf;
 	border-bottom: 1px solid #fcfcfc;
 }
