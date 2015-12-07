@@ -261,6 +261,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 					<tbody>';
 
 			foreach ( $events as $time => $time_cron_array ) {
+				$time = (int) $time;
 				foreach ( $time_cron_array as $hook => $data ) {
 					foreach ( $data as $hash => $info ) {
 						echo '
@@ -272,9 +273,10 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 							echo ' class="past"';
 						}
 
-						echo '>
-								', esc_html( date( 'Y-m-d H:i:s', $time ) ), '<br />
-								', intval( $time ), '<br />
+						echo  // WPCS: XSS ok.
+						'>
+								', date( 'Y-m-d H:i:s', $time ), '<br />
+								', $time, '<br />
 								', esc_html( $this->display_past_time( human_time_diff( $time ), $time ) ), '
 							</td>
 							<td>', esc_html( $hook ), '</td>';
