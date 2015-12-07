@@ -358,7 +358,9 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 					</tr></thead>
 					<tbody>';
 
-			foreach ( wp_get_schedules() as $interval_hook => $data ) {
+
+			$schedules = wp_get_schedules();
+			foreach ( $schedules as $interval_hook => $data ) {
 				echo '
 						<tr>
 							<td>', esc_html( $interval_hook ), '</td>
