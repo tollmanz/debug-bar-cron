@@ -117,14 +117,14 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			$this->_doing_cron = get_transient( 'doing_cron' ) ? __( 'Yes', 'zt-debug-bar-cron' ) : __( 'No', 'zt-debug-bar-cron' );
 
 			// Get the time of the next event.
-			$cron_times = ( is_array( $this->_crons ) ? array_keys( $this->_crons ) : array() );
+			$cron_times          = ( is_array( $this->_crons ) ? array_keys( $this->_crons ) : array() );
 			$unix_time_next_cron = $cron_times[0];
-			$time_next_cron = date( 'Y-m-d H:i:s', $unix_time_next_cron );
+			$time_next_cron      = date( 'Y-m-d H:i:s', $unix_time_next_cron );
 
 			$human_time_next_cron = human_time_diff( $unix_time_next_cron );
 
 			// Add a class if past current time and doing cron is not running.
-			$times_class = time() > $unix_time_next_cron && 'No' == $this->_doing_cron ? ' past' : '';
+			$times_class = ( time() > $unix_time_next_cron && 'No' === $this->_doing_cron ) ? ' past' : '';
 
 			echo '<div class="debug-bar-cron">';
 			echo '<h2><span>' . __( 'Total Events', 'zt-debug-bar-cron' ) . ':</span>' . (int) $this->_total_crons . '</h2>';
@@ -135,10 +135,11 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 			echo '<h3>' . __( 'Custom Events', 'zt-debug-bar-cron' ) . '</h3>';
 
-			if ( ! is_null( $this->_user_crons ) )
+			if ( ! is_null( $this->_user_crons ) ) {
 				$this->display_events( $this->_user_crons );
-			else
+			} else {
 				echo '<p>' . __( 'No Custom Events scheduled.', 'zt-debug-bar-cron' ) . '</p>';
+			}
 
 			echo '<h3>' . __( 'Schedules', 'zt-debug-bar-cron' ) . '</h3>';
 
@@ -146,10 +147,11 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 			echo '<h3>' . __( 'Core Events', 'zt-debug-bar-cron' ) . '</h3>';
 
-			if ( ! is_null( $this->_core_crons ) )
+			if ( ! is_null( $this->_core_crons ) ) {
 				$this->display_events( $this->_core_crons );
-			else
+			} else {
 				echo '<p>' . __( 'No Core Events scheduled.', 'zt-debug-bar-cron' ) . '</p>';
+			}
 
 			echo '</div>';
 		}
@@ -164,11 +166,13 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 * @return array Array of crons.
 		 */
 		private function get_crons() {
-			if ( ! is_null( $this->_crons ) )
+			if ( ! is_null( $this->_crons ) ) {
 				return $this->_crons;
+			}
 
-			if ( ! $crons = _get_cron_array() )
+			if ( ! $crons = _get_cron_array() ) {
 				return $this->_crons;
+			}
 
 			$this->_crons = $crons;
 
@@ -194,10 +198,11 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 				foreach ( $time_cron_array as $hook => $data ) {
 					$this->_total_crons++;
 
-					if ( in_array( $hook, $core_cron_hooks ) )
+					if ( in_array( $hook, $core_cron_hooks, true ) ) {
 						$this->_core_crons[ $time ][ $hook ] = $data;
-					else
+					} else {
 						$this->_user_crons[ $time ][ $hook ] = $data;
+					}
 				}
 			}
 
@@ -213,8 +218,9 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 * @return void|string Void on failure; table display of events on success.
 		 */
 		private function display_events( $events ) {
-			if ( is_null( $events ) || empty( $events ) )
+			if ( is_null( $events ) || empty( $events ) ) {
 				return;
+			}
 
 			echo '<table class="zt-debug-bar-cron-event-table" cellspacing="0">';
 			echo '<thead><tr>';
@@ -229,7 +235,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			foreach ( $events as $time => $time_cron_array ) {
 				foreach ( $time_cron_array as $hook => $data ) {
 					// Add a class if past current time.
-					$times_class = time() > $time && 'No' == $this->_doing_cron ? ' class="past"' : '';
+					$times_class = ( time() > $time && 'No' === $this->_doing_cron ) ? ' class="past"' : '';
 
 					echo '<tr>';
 					echo '<td' . $times_class . '>' . date( 'Y-m-d H:i:s', $time ) . '<br />' . $time . '<br />' . $this->display_past_time( human_time_diff( $time ), $time ) . '</td>';
@@ -238,10 +244,11 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 					foreach ( $data as $hash => $info ) {
 						// Report the schedule.
 						echo '<td>';
-						if ( $info['schedule'] )
+						if ( $info['schedule'] ) {
 							echo wp_strip_all_tags( $info['schedule'] );
-						else
-						echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
+						} else {
+							echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
+						}
 						echo '</td>';
 
 						// Report the interval.
@@ -264,7 +271,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 							foreach ( $info['args'] as $key => $value ) {
 								$this->display_cron_arguments( $key, $value );
 							}
-						} else if ( is_string( $info['args'] ) && $info['args'] !== '' ) {
+						} else if ( is_string( $info['args'] ) && '' !== $info['args'] ) {
 							echo esc_html( $info['args'] );
 						} else {
 							echo esc_html__( 'No Args', 'zt-debug-bar-cron' );
@@ -328,8 +335,8 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 				echo '<tr>';
 				echo '<td>' . esc_html( $interval_hook ) . '</td>';
 				echo '<td>' . wp_strip_all_tags( $data['interval'] ) . '</td>';
-				echo '<td>' . wp_strip_all_tags( $data['interval'] ) / 60 . '</td>';
-				echo '<td>' . wp_strip_all_tags( $data['interval'] ) / ( 60  * 60 ). '</td>';
+				echo '<td>' . ( wp_strip_all_tags( $data['interval'] ) / 60 ) . '</td>';
+				echo '<td>' . ( wp_strip_all_tags( $data['interval'] ) / ( 60 * 60 ) ). '</td>';
 				echo '<td>' . esc_html( $data['display'] ) . '</td>';
 				echo '</tr>';
 			}
