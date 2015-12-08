@@ -113,7 +113,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 				.'	args["hook"]   = jQuery(this).attr("data-hook");'
 				.'	args["args"]   = jQuery(this).attr("data-args");'
 				.'	args["nonce"]  = "'.wp_create_nonce('debug_cron_nonce').'";'
-				.'	jQuery.post("'.admin_url('admin-ajax.php').'", args, function(html){'
+				.'	jQuery.post( "'.admin_url('admin-ajax.php').'", args, function( html ){'
 				.'		t.parent().parent().remove(); '
 				.'	});'
 				.' } '
@@ -127,7 +127,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 * @param string $info Cron event meta data (interval, args)
 		 */
 		 public function print_remove_link( $hook, $info ){
-			$args = empty( $info['args'] ) ? '' : base64_encode(serialize($info['args']));
+			$args = empty( $info['args'] ) ? '' : base64_encode( serialize( $info['args'] ) );
 			$hook = wp_strip_all_tags( $hook );
 			 echo "<a href='#' data-hook='{$hook}' data-args='{$args}' ",
 			 " class='remove_cron_job'>", __("Drop Event", "zt-debug-bar-cron"), "</a>";
@@ -320,7 +320,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 								', esc_html( $this->display_past_time( human_time_diff( $time ), $time ) ), '
 							</td>
 							<td>', esc_html( $hook ),
-							 	$this->print_remove_link( $hook, $info), '</td>';
+							 	$this->print_remove_link( $hook, $info ), '</td>';
 
 
 						// Report the schedule.
