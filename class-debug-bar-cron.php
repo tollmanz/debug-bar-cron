@@ -362,7 +362,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 
 			$schedules = wp_get_schedules();
-			uasort($schedules, array($this, 'schedules_sorting'));
+			uasort( $schedules, array( $this, 'schedules_sorting' ) );
 			foreach ( $schedules as $interval_hook => $data ) {
 				$interval = (int) $data['interval'];
 				echo  // WPCS: XSS ok.
