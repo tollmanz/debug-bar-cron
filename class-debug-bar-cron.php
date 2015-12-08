@@ -142,7 +142,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 			$this->load_debug_bar_pretty_output();
 
-			echo  // WPCS: XSS ok.
+			echo // WPCS: XSS ok.
 			'
 			<div class="debug-bar-cron">
 				<h2><span>', esc_html__( 'Total Events', 'zt-debug-bar-cron' ), ':</span>', $this->_total_crons, '</h2>
@@ -273,7 +273,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 							echo ' class="past"';
 						}
 
-						echo  // WPCS: XSS ok.
+						echo // WPCS: XSS ok.
 						'>
 								', date( 'Y-m-d H:i:s', $time ), '<br />
 								', $time, '<br />
@@ -364,7 +364,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			$schedules = wp_get_schedules();
 			foreach ( $schedules as $interval_hook => $data ) {
 				$interval = (int) $data['interval'];
-				echo  // WPCS: XSS ok.
+				echo // WPCS: XSS ok.
 				'
 						<tr>
 							<td>', esc_html( $interval_hook ), '</td>
