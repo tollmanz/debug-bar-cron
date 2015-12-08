@@ -300,9 +300,9 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 							/* TRANSLATORS: %s is number of seconds. */
 							printf( esc_html__( '%ss', 'zt-debug-bar-cron' ) . '<br />', $interval ); // WPCS: XSS ok.
 							/* TRANSLATORS: %s is number of minutes. */
-							printf( esc_html__( '%sm', 'zt-debug-bar-cron' ) . '<br />', ( $interval / 60 ) ); // WPCS: XSS ok.
+							printf( esc_html__( '%sm', 'zt-debug-bar-cron' ) . '<br />', $this->get_minutes( $interval ) ); // WPCS: XSS ok.
 							/* TRANSLATORS: %s is number of hours. */
-							printf( esc_html__( '%sh', 'zt-debug-bar-cron' ), ( $interval / ( 60 * 60 ) ) ); // WPCS: XSS ok.
+							printf( esc_html__( '%sh', 'zt-debug-bar-cron' ), $this->get_hours( $interval ) ); // WPCS: XSS ok.
 						} else {
 							echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
 						}
@@ -369,8 +369,8 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 						<tr>
 							<td>', esc_html( $interval_hook ), '</td>
 							<td>', $interval, '</td>
-							<td>', ( $interval / 60 ), '</td>
-							<td>', ( $interval / ( 60 * 60 ) ), '</td>
+							<td>', $this->get_minutes( $interval ), '</td>
+							<td>', $this->get_hours( $interval ), '</td>
 							<td>', esc_html( $data['display'] ) . '</td>
 						</tr>';
 			}
@@ -384,12 +384,36 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		/**
 		 * Verify if a given timestamp is in the past or the future.
 		 *
-		 * @param int $time Timestamp.
+		 * @param int $time Unix timestamp.
 		 *
 		 * @return bool True if the time has passed, false otherwise.
 		 */
 		private function is_time_in_past( $time ) {
 			return ( time() > $time && 'No' === $this->_doing_cron );
+		}
+
+
+		/**
+		 * Transform a time in seconds to minutes rounded to 2 decimals.
+		 *
+		 * @param int $time Unix timestamp.
+		 *
+		 * @return int|float
+		 */
+		private function get_minutes( $time ) {
+			return round( ( (int) $time / 60 ), 2 );
+		}
+
+
+		/**
+		 * Transform a time in seconds to hours rounded to 2 decimals.
+		 *
+		 * @param int $time Unix timestamp.
+		 *
+		 * @return int|float
+		 */
+		private function get_hours( $time ) {
+			return round( ( (int) $time / 3600 ), 2 );
 		}
 
 
