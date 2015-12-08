@@ -90,8 +90,48 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			$this->title( __( 'Cron', 'zt-debug-bar-cron' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
+
+			add_action( 'wp_footer', array( $this, 'footerjs' ), 1000 );
+			add_action( 'admin_footer', array( $this, 'footerjs' ) , 1000 );
 		}
 
+		/**
+		 * print jQuery js code to provide actions
+		 * remove
+		 *
+		 * @return  void
+		 */
+		public function footerjs() {
+			$confirmMsg = __('Drop \"%s\" Event?', 'zt-debug-bar-cron');
+		 	echo '<script>'
+				.'jQuery(".remove_cron_job").bind("click", function(e){ e.preventDefault();'
+				.'var dbdceConfirmMsg = "'.$confirmMsg.'".replace("%s", jQuery(this).attr("data-hook"));'
+				.'if ( confirm(dbdceConfirmMsg) ) {'
+				.'	var t = jQuery(this);'
+				.'	var args = new Object();'
+				.'	args["action"] = "delete_cron_job";'
+				.'	args["hook"]   = jQuery(this).attr("data-hook");'
+				.'	args["args"]   = jQuery(this).attr("data-args");'
+				.'	args["nonce"]  = "'.wp_create_nonce('debug_cron_nonce').'";'
+				.'	jQuery.post("'.admin_url('admin-ajax.php').'", args, function(html){'
+				.'		t.parent().parent().remove(); '
+				.'	});'
+				.' } '
+				.'});'
+				.'</script>';
+		}
+
+		/**
+		 * Print "remove cron event" link.
+		 * @param string $hook Event hook of cron eventes
+		 * @param string $info Cron event meta data (interval, args)
+		 */
+		 public function print_remove_link( $hook, $info ){
+			$args = empty( $info['args'] ) ? '' : base64_encode(serialize($info['args']));
+			$hook = wp_strip_all_tags( $hook );
+			 echo "<a href='#' data-hook='{$hook}' data-args='{$args}' ",
+			 " class='remove_cron_job'>", __("Drop Event", "zt-debug-bar-cron"), "</a>";
+		 }
 
 		/**
 		 * Enqueue styles.
@@ -279,7 +319,8 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 								', $time, '<br />
 								', esc_html( $this->display_past_time( human_time_diff( $time ), $time ) ), '
 							</td>
-							<td>', esc_html( $hook ), '</td>';
+							<td>', esc_html( $hook ),
+							 	$this->print_remove_link( $hook, $info), '</td>';
 
 
 						// Report the schedule.

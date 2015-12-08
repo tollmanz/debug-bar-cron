@@ -51,3 +51,12 @@
 .zt-debug-bar-cron-event-table thead th.col4 {
 	width: 120px;
 }
+
+.zt-debug-bar-cron-event-table tr a {
+	display:block;
+	visibility:hidden;
+}
+
+.zt-debug-bar-cron-event-table tr:hover a {
+	visibility:visible;
+}

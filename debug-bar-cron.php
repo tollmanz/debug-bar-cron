@@ -62,3 +62,24 @@ if ( ! function_exists( 'zt_add_debug_bar_cron_panel' ) ) {
 	}
 	add_filter( 'debug_bar_panels', 'zt_add_debug_bar_cron_panel' );
 }
+
+
+/**
+ * Drop Cron Event ajax action
+ * @return void
+ */
+function wp_ajax_delete_cron_job(){
+
+	if (!current_user_can('manage_options') || !isset($_POST['nonce'])
+		|| !wp_verify_nonce( $_POST['nonce'], 'debug_cron_nonce' ) ) {
+			die();
+		}
+
+	$ajax = stripslashes_deep($_POST);
+	$ajax['args'] = unserialize(base64_decode($ajax['args']));
+	$ajax['args'] = $ajax['args'] === false ? array() : $ajax['args'];
+	if ( false !== ( $ts = wp_next_scheduled( $ajax['hook'] , $ajax['args']) ) )
+		wp_unschedule_event( $ts, $ajax['hook'], $ajax['args']);
+}
+
+add_action('wp_ajax_delete_cron_job', 'wp_ajax_delete_cron_job');
