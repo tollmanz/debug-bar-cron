@@ -362,6 +362,8 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 
 			$schedules = wp_get_schedules();
+			ksort( $schedules );
+			uasort( $schedules, array( $this, 'schedules_sorting' ) );
 			foreach ( $schedules as $interval_hook => $data ) {
 				$interval = (int) $data['interval'];
 				echo // WPCS: XSS ok.
@@ -380,6 +382,21 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 				</table>';
 		}
 
+		/**
+		 * Sorting method for cron scheldules. Order by schedules interval.
+		 *
+		 * @param array $a First element of comparison pair.
+		 * @param array $b Second element of comparison pair.
+		 *
+		 * @return int Return 1 if $a argument 'interval' greater then $b argument 'interval', 0 if both intervals equivalent and -1 otherwise.
+		 */
+		function schedules_sorting( $a, $b ) {
+			if ( (int) $a['interval'] === (int) $b['interval'] ) {
+				return 0;
+			} else {
+				return ( ( (int) $a['interval'] > (int) $b['interval'] ) ? 1 : -1 );
+			}
+		}
 
 		/**
 		 * Verify if a given timestamp is in the past or the future.
