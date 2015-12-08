@@ -382,10 +382,10 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		}
 
 		/**
-		 * Sorting method for cron scheldules. Order by scheldule interval
+		 * Sorting method for cron scheldules. Order by schedules interval.
 		 *
-		 * @param array $a first element of compasion  pair
-		 * @param array $b second element of compasion  pair
+		 * @param array $a first element of comparison  pair
+		 * @param array $b second element of comparison  pair
 		 *
 		 * @return int 1 if element $a interval greater then element $b interval, -1  otherwise.
 		 */
