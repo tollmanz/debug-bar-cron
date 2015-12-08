@@ -388,10 +388,11 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 * @param array $a First element of comparison pair
 		 * @param array $b Second element of comparison pair
 		 *
-		 * @return int 1 if element $a interval greater then element $b interval, -1  otherwise.
+		 * @return int Return 1 if $a argument 'interval' greater then $b argument 'interval', 0 if both intervals equivalent and -1 otherwise.
 		 */
 		function schedules_sorting( $a, $b ){
-			return (int) $a['interval'] > (int) $b['interval'] ? 1 : -1;
+			return (int) $a['interval'] > (int) $b['interval'] ? 1 :
+				( (int) $a['interval'] == (int) $b['interval'] ? 0 : -1 ) ;
 		}
 
 		/**
