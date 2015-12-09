@@ -70,7 +70,7 @@
 .zt-debug-bar-cron-schedule-table td:nth-child(2),
 .zt-debug-bar-cron-schedule-table td:nth-child(3),
 .zt-debug-bar-cron-schedule-table td:nth-child(4),
-.zt-debug-bar-cron-event-table td:nth-child(4) {
+.zt-debug-bar-cron-event-table td.intervals {
 	text-align: right;
 	padding-right: 30px;
 }

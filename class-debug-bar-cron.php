@@ -261,20 +261,44 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 					<tbody>';
 
 			foreach ( $events as $time => $time_cron_array ) {
-				$time = (int) $time;
+				$time       = (int) $time;
+				$hook_count = $this->get_arg_set_count( $time_cron_array );
+				$show_time  = true;
+
 				foreach ( $time_cron_array as $hook => $data ) {
 					$row_attributes = $this->get_event_row_attributes( $time, $hook );
+					$arg_set_count  = count( $data );
+					$show_hook      = true;
 
 					foreach ( $data as $hash => $info ) {
 						echo // WPCS: xss ok.
 						'
-						<tr', $row_attributes, '>
-							<td>
+						<tr', $row_attributes, '>';
+
+						if ( true === $show_time ) {
+							$row_span = ( $hook_count > 1 ) ? ' rowspan="' . $hook_count . '"' : '';
+
+							echo // WPCS: xss ok.
+							'
+							<td' . $row_span . '>
 								', date( 'Y-m-d H:i:s', $time ), '<br />
 								', $time, '<br />
 								', esc_html( $this->display_past_time( human_time_diff( $time ), $time ) ), '
-							</td>
-							<td>', esc_html( $hook ), '</td>';
+							</td>';
+
+							$show_time = false;
+							unset( $row_span );
+						}
+						if ( true === $show_hook ) {
+							$row_span = ( $arg_set_count > 1 ) ? ' rowspan="' . $arg_set_count . '"' : '';
+
+							echo // WPCS: xss ok.
+							'
+							<td' . $row_span . '>', esc_html( $hook ), '</td>';
+
+							$show_hook = false;
+							unset( $row_span );
+						}
 
 
 						// Report the schedule.
@@ -289,7 +313,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 						// Report the interval.
 						echo '
-							<td>';
+							<td class="intervals">';
 						if ( isset( $info['interval'] ) ) {
 							$interval = (int) $info['interval'];
 							/* TRANSLATORS: %s is number of seconds. */
@@ -316,6 +340,22 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			echo '
 					</tbody>
 				</table>';
+		}
+
+
+		/**
+		 * Count the number of argument sets for a cron time.
+		 *
+		 * @param array $hook_array Array of hooks with argument sets.
+		 *
+		 * @return int
+		 */
+		private function get_arg_set_count( $hook_array ) {
+			$count = 0;
+			foreach ( $hook_array as $set ) {
+				$count += count( $set );
+			}
+			return $count;
 		}
 
 
