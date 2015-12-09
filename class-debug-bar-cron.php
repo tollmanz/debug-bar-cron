@@ -79,6 +79,29 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 */
 		private $_doing_cron = 'No';
 
+		/**
+		 * Lists all crons that are defined in WP Core.
+		 *
+		 * @var array
+		 *
+		 * @internal To find all, search WP trunk for `wp_schedule_(single_)?event`.
+		 */
+		private $core_cron_hooks = array(
+			'do_pings',
+			'importer_scheduled_cleanup',     // WP 3.1+.
+			'publish_future_post',
+			'update_network_counts',          // WP 3.1+.
+			'upgrader_scheduled_cleanup',     // WP 3.3+.
+			'wp_maybe_auto_update',           // WP 3.7+.
+			'wp_scheduled_auto_draft_delete', // WP 3.4+.
+			'wp_scheduled_delete',            // WP 2.9+.
+			'wp_split_shared_term_batch',     // WP 4.3+.
+			'wp_update_plugins',
+			'wp_update_themes',
+			'wp_version_check',
+		);
+
+
 
 		/**
 		 * Give the panel a title and set the enqueues.
@@ -182,9 +205,6 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		/**
 		 * Gets all of the cron jobs.
 		 *
-		 * This function sorts the cron jobs into core crons, and custom crons. It also tallies
-		 * a total count for the crons as this number is otherwise tough to get.
-		 *
 		 * @return array|null Array of crons.
 		 */
 		private function get_crons() {
@@ -193,35 +213,27 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			}
 
 			$crons = _get_cron_array();
-			if ( ! is_array( $crons ) || array() === $crons  ) {
-				return $this->_crons;
+			if ( is_array( $crons ) && ! empty( $crons ) ) {
+				$this->_crons = $crons;
+				$this->sort_count_crons();
 			}
 
-			$this->_crons = $crons;
+			return $this->_crons;
+		}
 
-			// Lists all crons that are defined in WP Core.
-			// @internal To find all, search WP trunk for `wp_schedule_(single_)?event`.
-			$core_cron_hooks = array(
-				'do_pings',
-				'importer_scheduled_cleanup',     // WP 3.1+.
-				'publish_future_post',
-				'update_network_counts',          // WP 3.1+.
-				'upgrader_scheduled_cleanup',     // WP 3.3+.
-				'wp_maybe_auto_update',           // WP 3.7+.
-				'wp_scheduled_auto_draft_delete', // WP 3.4+.
-				'wp_scheduled_delete',            // WP 2.9+.
-				'wp_split_shared_term_batch',     // WP 4.3+.
-				'wp_update_plugins',
-				'wp_update_themes',
-				'wp_version_check',
-			);
 
-			// Sort and count crons.
+		/**
+		 * Sort and count crons.
+		 *
+		 * This function sorts the cron jobs into core crons, and custom crons. It also tallies
+		 * a total count for the crons as this number is otherwise tough to get.
+		 */
+		private function sort_count_crons() {
 			foreach ( $this->_crons as $time => $time_cron_array ) {
 				foreach ( $time_cron_array as $hook => $data ) {
 					$this->_total_crons += count( $data );
 
-					if ( in_array( $hook, $core_cron_hooks, true ) ) {
+					if ( in_array( $hook, $this->core_cron_hooks, true ) ) {
 						$this->_core_crons[ $time ][ $hook ] = $data;
 						$this->_total_core_crons            += count( $data );
 					} else {
@@ -230,8 +242,6 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 					}
 				}
 			}
-
-			return $this->_crons;
 		}
 
 
@@ -261,9 +271,9 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 					<tbody>';
 
 			foreach ( $events as $time => $time_cron_array ) {
-				$time       = (int) $time;
-				$hook_count = $this->get_arg_set_count( $time_cron_array );
-				$show_time  = true;
+				$time        = (int) $time;
+				$event_count = $this->get_arg_set_count( $time_cron_array );
+				$show_time   = true;
 
 				foreach ( $time_cron_array as $hook => $data ) {
 					$row_attributes = $this->get_event_row_attributes( $time, $hook );
@@ -276,66 +286,39 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 						<tr', $row_attributes, '>';
 
 						if ( true === $show_time ) {
-							$row_span = ( $hook_count > 1 ) ? ' rowspan="' . $hook_count . '"' : '';
-
-							echo // WPCS: xss ok.
-							'
-							<td' . $row_span . '>
-								', date( 'Y-m-d H:i:s', $time ), '<br />
-								', $time, '<br />
-								', esc_html( $this->display_past_time( human_time_diff( $time ), $time ) ), '
-							</td>';
-
+							$this->display_event_time( $time, $event_count );
 							$show_time = false;
-							unset( $row_span );
 						}
+
 						if ( true === $show_hook ) {
-							$row_span = ( $arg_set_count > 1 ) ? ' rowspan="' . $arg_set_count . '"' : '';
-
-							echo // WPCS: xss ok.
-							'
-							<td' . $row_span . '>', esc_html( $hook ), '</td>';
-
+							$this->display_event_hook( $hook, $arg_set_count );
 							$show_hook = false;
-							unset( $row_span );
 						}
-
 
 						// Report the schedule.
 						echo '
 							<td>';
-						if ( ! empty( $info['schedule'] ) ) {
-							echo esc_html( $info['schedule'] );
-						} else {
-							echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
-						}
+						$this->display_event_schedule( $info );
 						echo '</td>';
 
 						// Report the interval.
 						echo '
 							<td class="intervals">';
-						if ( isset( $info['interval'] ) ) {
-							$interval = (int) $info['interval'];
-							/* TRANSLATORS: %s is number of seconds. */
-							printf( esc_html__( '%ss', 'zt-debug-bar-cron' ) . '<br />', $interval ); // WPCS: XSS ok.
-							/* TRANSLATORS: %s is number of minutes. */
-							printf( esc_html__( '%sm', 'zt-debug-bar-cron' ) . '<br />', $this->get_minutes( $interval ) ); // WPCS: XSS ok.
-							/* TRANSLATORS: %s is number of hours. */
-							printf( esc_html__( '%sh', 'zt-debug-bar-cron' ), $this->get_hours( $interval ) ); // WPCS: XSS ok.
-						} else {
-							echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
-						}
+						$this->display_event_intervals( $info );
 						echo '</td>';
 
 						// Report the args.
 						echo '
 							<td>';
-						$this->display_cron_arguments( $info['args'] );
+						$this->display_event_cron_arguments( $info['args'] );
 						echo '</td>
 						</tr>';
 					}
+					unset( $hash, $info );
 				}
+				unset( $hook, $data, $row_attributes, $arg_set_count, $show_hook );
 			}
+			unset( $time, $time_cron_array, $hook_count, $show_time );
 
 			echo '
 					</tbody>
@@ -392,13 +375,82 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 
 
 		/**
+		 * Display the timing for the event as a date, timestamp and human readable time difference.
+		 *
+		 * @param int $time        Timestamp.
+		 * @param int $event_count Number of events running at this time.
+		 */
+		private function display_event_time( $time, $event_count ) {
+			$row_span = ( $event_count > 1 ) ? ' rowspan="' . $event_count . '"' : '';
+
+			echo // WPCS: xss ok.
+			'
+			<td' . $row_span . '>
+				', date( 'Y-m-d H:i:s', $time ), '<br />
+				', $time, '<br />
+				', esc_html( $this->display_past_time( human_time_diff( $time ), $time ) ), '
+			</td>';
+		}
+
+
+		/**
+		 * Display the name of the cron job event hook.
+		 *
+		 * @param string $hook          Hook name.
+		 * @param int    $arg_set_count Number of events running at this time and on this hook.
+		 */
+		private function display_event_hook( $hook, $arg_set_count ) {
+			$row_span = ( $arg_set_count > 1 ) ? ' rowspan="' . $arg_set_count . '"' : '';
+
+			echo // WPCS: xss ok.
+			'
+			<td' . $row_span . '>', esc_html( $hook ), '</td>';
+		}
+
+
+		/**
+		 * Displays the the event schedule name for recurring events or else 'single event'.
+		 *
+		 * @param array $info Event info array.
+		 */
+		private function display_event_schedule( $info ) {
+			if ( ! empty( $info['schedule'] ) ) {
+				echo esc_html( $info['schedule'] );
+			} else {
+				echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
+			}
+		}
+
+
+		/**
+		 * Displays the event interval in seconds, minutes and hours.
+		 *
+		 * @param array $info Event info array.
+		 */
+		private function display_event_intervals( $info ) {
+			if ( ! empty( $info['interval'] ) ) {
+				$interval = (int) $info['interval'];
+				/* TRANSLATORS: %s is number of seconds. */
+				printf( esc_html__( '%ss', 'zt-debug-bar-cron' ) . '<br />', $interval ); // WPCS: XSS ok.
+				/* TRANSLATORS: %s is number of minutes. */
+				printf( esc_html__( '%sm', 'zt-debug-bar-cron' ) . '<br />', $this->get_minutes( $interval ) ); // WPCS: XSS ok.
+				/* TRANSLATORS: %s is number of hours. */
+				printf( esc_html__( '%sh', 'zt-debug-bar-cron' ), $this->get_hours( $interval ) ); // WPCS: XSS ok.
+				unset( $interval );
+			} else {
+				echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
+			}
+		}
+
+
+		/**
 		 * Displays the cron arguments in a readable format.
 		 *
 		 * @param mixed $args Cron argument(s).
 		 *
 		 * @return void
 		 */
-		private function display_cron_arguments( $args ) {
+		private function display_event_cron_arguments( $args ) {
 			// Arguments defaults to an empty array if no arguments are given.
 			if ( is_array( $args ) && array() === $args ) {
 				echo esc_html__( 'No Args', 'zt-debug-bar-cron' );
@@ -457,7 +509,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 *
 		 * @return int Return 1 if $a argument 'interval' greater then $b argument 'interval', 0 if both intervals equivalent and -1 otherwise.
 		 */
-		function schedules_sorting( $a, $b ) {
+		private function schedules_sorting( $a, $b ) {
 			if ( (int) $a['interval'] === (int) $b['interval'] ) {
 				return 0;
 			} else {
