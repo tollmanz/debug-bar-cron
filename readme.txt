@@ -38,7 +38,8 @@ Yes
 
 == Screenshots ==
 
-1. The Debug Bar Cron panel
+1. The Debug Bar Cron panel.
+1. Indicator for events without associated actions.
 
 == Changelog ==
 

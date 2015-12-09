@@ -263,18 +263,13 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			foreach ( $events as $time => $time_cron_array ) {
 				$time = (int) $time;
 				foreach ( $time_cron_array as $hook => $data ) {
+					$row_attributes = $this->get_event_row_attributes( $time, $hook );
+
 					foreach ( $data as $hash => $info ) {
-						echo '
-						<tr>
-							<td';
-
-						// Add a class if past current time.
-						if ( $this->is_time_in_past( $time ) ) {
-							echo ' class="past"';
-						}
-
-						echo // WPCS: XSS ok.
-						'>
+						echo // WPCS: xss ok.
+						'
+						<tr', $row_attributes, '>
+							<td>
 								', date( 'Y-m-d H:i:s', $time ), '<br />
 								', $time, '<br />
 								', esc_html( $this->display_past_time( human_time_diff( $time ), $time ) ), '
@@ -285,7 +280,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 						// Report the schedule.
 						echo '
 							<td>';
-						if ( $info['schedule'] ) {
+						if ( ! empty( $info['schedule'] ) ) {
 							echo esc_html( $info['schedule'] );
 						} else {
 							echo esc_html__( 'Single Event', 'zt-debug-bar-cron' );
@@ -321,6 +316,38 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 			echo '
 					</tbody>
 				</table>';
+		}
+
+
+		/**
+		 * Create a HTML attribute string for an event row.
+		 *
+		 * @param int    $time Unix timestamp.
+		 * @param string $hook Action hook for the cron job.
+		 *
+		 * @return string
+		 */
+		private function get_event_row_attributes( $time, $hook ) {
+			$attributes = '';
+			$classes    = array();
+
+			// Add a class if past current time.
+			if ( $this->is_time_in_past( $time ) ) {
+				$classes[] = 'past';
+			}
+
+			// Verify if any events are hooked in.
+			if ( false === has_action( $hook ) ) {
+				/* TRANSLATORS: This text will display as a tooltip. %1$s will be replaced by a line break. */
+				$attributes .= ' title="' . sprintf( esc_attr__( 'No actions are hooked into this event at this time.%1$sThe most likely reason for this is that a plugin or theme was de-activated or uninstalled and didn\'t clean up after itself.%1$sHowever, a number of plugins also use the best practice of lean loading and only hook in conditionally, so check carefully if you intend to remove this event.', 'zt-debug-bar-cron' ), "\n" ) . '"';
+				$classes[]   = 'empty-event';
+			}
+
+			if ( ! empty( $classes ) ) {
+				$attributes .= ' class="' . implode( ' ', $classes ) . '"';
+			}
+
+			return $attributes;
 		}
 
 
