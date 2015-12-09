@@ -5,7 +5,8 @@
 .debug-bar-cron h2.times span {
 	line-height: 150%;
 }
-.debug-bar-cron .past {
+.debug-bar-cron h2.times.past,
+.debug-bar-cron tr.past td:nth-child(1) {
 	color: red;
 }
 .debug-bar-cron h2.times.past span {
@@ -34,8 +35,18 @@
 .zt-debug-bar-cron-table tr:nth-child(2n) {
 	background: #fcfcfc;
 }
-.zt-debug-bar-cron-table td.past {
+
+.debug-bar-cron tr.past td:nth-child(1) {
 	font-weight: bold;
+}
+
+.zt-debug-bar-cron-event-table tr.empty-event {
+	border-left: 0.7em solid #ffc04c;
+	border-right: 0.7em solid #ffc04c;
+	background-color: #fff6e5;
+}
+.zt-debug-bar-cron-event-table tr.empty-event td:nth-child(1) {
+	padding-left: .15em;
 }
 
 .zt-debug-bar-cron-event-table thead th.col1 {
