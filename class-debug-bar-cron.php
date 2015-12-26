@@ -86,7 +86,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 *
 		 * @internal To find all, search WP trunk for `wp_schedule_(single_)?event`.
 		 */
-		private $core_cron_hooks = array(
+		private $_core_cron_hooks = array(
 			'do_pings',
 			'importer_scheduled_cleanup',     // WP 3.1+.
 			'publish_future_post',
@@ -233,7 +233,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 				foreach ( $time_cron_array as $hook => $data ) {
 					$this->_total_crons += count( $data );
 
-					if ( in_array( $hook, $this->core_cron_hooks, true ) ) {
+					if ( in_array( $hook, $this->_core_cron_hooks, true ) ) {
 						$this->_core_crons[ $time ][ $hook ] = $data;
 						$this->_total_core_crons            += count( $data );
 					} else {
