@@ -2,9 +2,6 @@
 <ruleset name="Debug Bar Cron">
 	<description>The code standard for Debug Bar Cron is WordPress.</description>
 
-	<!-- Exclude the codesniffer itself from checks. -->
-	<exclude-pattern>phpcs/*</exclude-pattern>
-	<exclude-pattern>wpcs/*</exclude-pattern>
 	<exclude-pattern>*/inc/debug-bar-pretty-output/*</exclude-pattern>
 
 	<rule ref="WordPress">

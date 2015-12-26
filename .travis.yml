@@ -33,31 +33,47 @@ matrix:
     - php: 'hhvm'
 
 before_script:
-  - export PHPCS_DIR=/tmp/phpcs
-  - export WPCS_DIR=/tmp/wpcs
-  # Install CodeSniffer for WordPress Coding Standards checks.
-  - git clone --depth 1 https://github.com/squizlabs/PHP_CodeSniffer.git $PHPCS_DIR
-  # Install WordPress Coding Standards.
-  - git clone -b develop --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git $WPCS_DIR
-  # Set install path for WordPress Coding Standards.
-  # @link https://github.com/squizlabs/PHP_CodeSniffer/blob/4237c2fc98cc838730b76ee9cee316f99286a2a7/CodeSniffer.php#L1941
-  - $PHPCS_DIR/scripts/phpcs --config-set installed_paths $WPCS_DIR
-  # After CodeSniffer install you should refresh your path.
-  - phpenv rehash
+    - export PHPCS_DIR=/tmp/phpcs
+    - export WPCS_DIR=/tmp/wpcs
+    # Install CodeSniffer for WordPress Coding Standards checks.
+    - if [[ "$SNIFF" == "1" ]]; then git clone -b master --depth 1 https://github.com/squizlabs/PHP_CodeSniffer.git $PHPCS_DIR; fi
+    # Install WordPress Coding Standards.
+    - if [[ "$SNIFF" == "1" ]]; then git clone -b develop --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git $WPCS_DIR; fi
+    # Set install path for WordPress Coding Standards.
+    # @link https://github.com/squizlabs/PHP_CodeSniffer/blob/4237c2fc98cc838730b76ee9cee316f99286a2a7/CodeSniffer.php#L1941
+    - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/scripts/phpcs --config-set installed_paths $WPCS_DIR; fi
+    # After CodeSniffer install you should refresh your path.
+    - if [[ "$SNIFF" == "1" ]]; then phpenv rehash; fi
+    # Install JSCS: JavaScript Code Style checker
+    # @link http://jscs.info/
+    - if [[ "$SNIFF" == "1" ]]; then npm install -g jscs; fi
+    # Install JSHint, a JavaScript Code Quality Tool
+    # @link http://jshint.com/docs/
+    - if [[ "$SNIFF" == "1" ]]; then npm install -g jshint; fi
+    # Pull in the WP Core jshint rules.
+    - if [[ "$SNIFF" == "1" ]]; then wget https://develop.svn.wordpress.org/trunk/.jshintrc; fi
 
 # Run test script commands.
 # All commands must exit with code 0 on success. Anything else is considered failure.
 script:
     # Search for PHP syntax errors.
-    - if find . -name "*.php" -exec php -l {} \; | grep "^[Parse error|Fatal error]"; then exit 1; fi;
-    # WordPress Coding Standards
+    - find -L . -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
+    # Run through JSHint.
+    - if [[ "$SNIFF" == "1" ]]; then jshint .; fi
+    # Run through JavaScript Code Style checker.
+    - if [[ "$SNIFF" == "1" ]]; then jscs .; fi
+    # WordPress Coding Standards.
     # @link https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards
     # @link http://pear.php.net/package/PHP_CodeSniffer/
     # -p flag: Show progress of the run.
     # -s flag: Show sniff codes in all reports.
     # -v flag: Print verbose output.
-    # -n flag: Do not print warnings (shortcut for --warning-severity=0)
+    # -n flag: Do not print warnings. (shortcut for --warning-severity=0)
     # --standard: Use WordPress as the standard.
     # --extensions: Only sniff PHP files.
     - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/scripts/phpcs -p -s -v -n . --standard=./phpcs.xml --extensions=php; fi
 
+# Receive notifications for build results.
+# @link http://docs.travis-ci.com/user/notifications/#Email-notifications
+notifications:
+    email: false
