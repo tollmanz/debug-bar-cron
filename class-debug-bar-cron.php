@@ -500,7 +500,6 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 					</tr></thead>
 					<tbody>';
 
-
 			$schedules = wp_get_schedules();
 			ksort( $schedules );
 			uasort( $schedules, array( $this, 'schedules_sorting' ) );
@@ -523,18 +522,19 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		}
 
 		/**
-		 * Sorting method for cron scheldules. Order by schedules interval.
+		 * Sorting method for cron schedules. Order by schedules interval.
 		 *
-		 * @param array $a First element of comparison pair.
-		 * @param array $b Second element of comparison pair.
+		 * @param array $schedule_a First element of comparison pair.
+		 * @param array $schedule_b Second element of comparison pair.
 		 *
-		 * @return int Return 1 if $a argument 'interval' greater then $b argument 'interval', 0 if both intervals equivalent and -1 otherwise.
+		 * @return int Return 1 if $schedule_a argument 'interval' greater then $schedule_b argument 'interval',
+		 *             0 if both intervals equivalent and -1 otherwise.
 		 */
-		private function schedules_sorting( $a, $b ) {
-			if ( (int) $a['interval'] === (int) $b['interval'] ) {
+		private function schedules_sorting( $schedule_a, $schedule_b ) {
+			if ( (int) $schedule_a['interval'] === (int) $schedule_b['interval'] ) {
 				return 0;
 			} else {
-				return ( ( (int) $a['interval'] > (int) $b['interval'] ) ? 1 : -1 );
+				return ( ( (int) $schedule_a['interval'] > (int) $schedule_b['interval'] ) ? 1 : -1 );
 			}
 		}
 
@@ -555,7 +555,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 *
 		 * @param int $time Unix timestamp.
 		 *
-		 * @return int|float
+		 * @return float
 		 */
 		private function get_minutes( $time ) {
 			return round( ( (int) $time / 60 ), 2 );
@@ -567,7 +567,7 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 *
 		 * @param int $time Unix timestamp.
 		 *
-		 * @return int|float
+		 * @return float
 		 */
 		private function get_hours( $time ) {
 			return round( ( (int) $time / 3600 ), 2 );
