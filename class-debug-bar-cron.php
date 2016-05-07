@@ -109,31 +109,10 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		 * @return void
 		 */
 		public function init() {
-			$this->load_textdomain( 'debug-bar-cron' );
+			load_plugin_textdomain( 'debug-bar-cron' );
 			$this->title( __( 'Cron', 'debug-bar-cron' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
-		}
-
-
-		/**
-		 * Load the plugin text strings.
-		 *
-		 * Compatible with use of the plugin in the must-use plugins directory.
-		 *
-		 * @param string $domain Text domain to load.
-		 */
-		protected function load_textdomain( $domain ) {
-			if ( is_textdomain_loaded( $domain ) ) {
-				return;
-			}
-
-			$lang_path = dirname( plugin_basename( __FILE__ ) ) . '/languages';
-			if ( false === strpos( __FILE__, basename( WPMU_PLUGIN_DIR ) ) ) {
-				load_plugin_textdomain( $domain, false, $lang_path );
-			} else {
-				load_muplugin_textdomain( $domain, $lang_path );
-			}
 		}
 
 
