@@ -102,7 +102,6 @@ if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) && class_exists( 'Debug_Bar_Panel' ) 
 		);
 
 
-
 		/**
 		 * Give the panel a title and set the enqueues.
 		 *

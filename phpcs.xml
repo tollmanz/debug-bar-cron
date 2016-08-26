@@ -4,8 +4,13 @@
 
 	<exclude-pattern>*/inc/debug-bar-pretty-output/*</exclude-pattern>
 
+	<!-- ##### PHP cross-version compatibility ##### -->
+	<config name="testVersion" value="5.2-99.0"/>
+	<rule ref="PHPCompatibility"/>
+
+
+	<!-- ##### WordPress sniffs #####-->
 	<rule ref="WordPress">
-		<exclude name="WordPress.VIP" />
 		<exclude name="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines" />
 	</rule>
 
