@@ -18,12 +18,45 @@
 
 
 	<!-- ##### WordPress sniffs #####-->
-	<rule ref="WordPress">
-		<exclude name="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines" />
+	<rule ref="WordPress"/>
+	
+	
+	<!-- ##### Customizations #####-->
+
+	<!-- Verify that the text_domain is set to the desired text-domain.
+		 Multiple valid text domains can be provided as a comma-delimited list. -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array" value="debug-bar-cron" />
+		</properties>
+	</rule>
+
+	<!-- Verify that everything in the global namespace is prefixed with a theme specific prefix.
+		 Multiple valid prefixes can be provided as a comma-delimited list. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array" value="ZT,debug_bar_cron" />
+		</properties>
+	</rule>
+
+	<!-- Verify that no WP functions are used which are deprecated or have been removed.
+		 The minimum version set here should be in line with the minimum WP version
+		 supported by the Debug Bar extension. -->
+	<rule ref="WordPress.WP.DeprecatedFunctions">
+		<properties>
+			<property name="minimum_supported_version" value="3.4" />
+		</properties>
+	</rule>
+	<rule ref="WordPress.WP.DeprecatedClasses">
+		<properties>
+			<property name="minimum_supported_version" value="3.4" />
+		</properties>
 	</rule>
 
 
-	<!-- exclude the 'empty' index files from some documentation checks -->
+	<!-- ##### Exlusions #####-->
+
+	<!-- Exclude the 'empty' index files from some documentation checks. -->
 	<rule ref="Squiz.Commenting.FileComment.WrongStyle">
 		<exclude-pattern>*/index.php</exclude-pattern>
 	</rule>
