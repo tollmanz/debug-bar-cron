@@ -9,15 +9,15 @@
  * @license     http://creativecommons.org/licenses/GPL/2.0/ GNU General Public License, version 2 or higher
  *
  * @wordpress-plugin
- * Plugin Name:	Debug Bar Cron
- * Plugin URI:	http://wordpress.org/extend/plugins/debug-bar-cron/
- * Description:	Debug Bar Cron adds information about WP scheduled events to the Debug Bar.
- * Version:		0.1.2
- * Author:		Zack Tollman, Helen Hou-Sandi
- * Author URI:	http://github.com/tollmanz/
+ * Plugin Name: Debug Bar Cron
+ * Plugin URI:  http://wordpress.org/extend/plugins/debug-bar-cron/
+ * Description: Debug Bar Cron adds information about WP scheduled events to the Debug Bar.
+ * Version:     0.1.2
+ * Author:      Zack Tollman, Helen Hou-Sandi
+ * Author URI:  http://github.com/tollmanz/
  * Depends:     Debug Bar
- * Text Domain:	debug-bar-cron
- * Domain Path:	/languages/
+ * Text Domain: debug-bar-cron
+ * Domain Path: /languages/
  */
 
 // Avoid direct calls to this file.
@@ -41,9 +41,13 @@ if ( ! function_exists( 'debug_bar_cron_has_parent_plugin' ) ) {
 
 			// Add to recently active plugins list.
 			if ( ! is_network_admin() ) {
-				update_option( 'recently_activated', ( array( $file => time() ) + (array) get_option( 'recently_activated' ) ) );
+				$insert = array(
+					$file => time(),
+				);
+
+				update_option( 'recently_activated', ( $insert + (array) get_option( 'recently_activated' ) ) );
 			} else {
-				update_site_option( 'recently_activated', ( array( $file => time() ) + (array) get_site_option( 'recently_activated' ) ) );
+				update_site_option( 'recently_activated', ( $insert + (array) get_site_option( 'recently_activated' ) ) );
 			}
 
 			// Prevent trying again on page reload.
@@ -66,7 +70,7 @@ if ( ! function_exists( 'zt_add_debug_bar_cron_panel' ) ) {
 	 */
 	function zt_add_debug_bar_cron_panel( $panels ) {
 		if ( ! class_exists( 'ZT_Debug_Bar_Cron' ) ) {
-			require_once 'class-debug-bar-cron.php';
+			require_once 'class-zt-debug-bar-cron.php';
 			$panels[] = new ZT_Debug_Bar_Cron();
 		}
 		return $panels;
