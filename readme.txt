@@ -45,6 +45,7 @@ Yes
 
 = Trunk =
 * Fix compatibility with the [Plugin Dependencies](http://wordpress.org/plugins/plugin-dependencies/) plugin
+* Defer to just in time loading of translations for WP > 4.5.
 
 = 0.1.3 =
 
