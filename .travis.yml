@@ -77,7 +77,7 @@ script:
     # @link http://pear.php.net/package/PHP_CodeSniffer/
     # Uses a custom ruleset based on WordPress.
     # Only fails the build on errors, not warnings, but still show warnings in the output.
-    - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/bin/phpcs --standard=./phpcs.xml --runtime-set ignore_warnings_on_exit 1; fi
+    - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/bin/phpcs --runtime-set ignore_warnings_on_exit 1; fi
 
 # Receive notifications for build results.
 # @link http://docs.travis-ci.com/user/notifications/#Email-notifications
