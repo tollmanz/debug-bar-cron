@@ -6,6 +6,7 @@ Requires at least: 3.3
 Tested up to: trunk
 Stable tag: 0.1.3
 Requires PHP: 5.2.4
+License: GPLv2 or later
 
 Debug Bar Cron adds a new panel to Debug Bar that displays information about WP scheduled events.
 
