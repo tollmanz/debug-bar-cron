@@ -32,6 +32,8 @@ matrix:
     - php: '7.0'
     # aliased to a recent 7.1.x version
     - php: '7.1'
+    # aliased to a recent 7.2.x version
+    - php: '7.2'
     # bleeding edge
     - php: 'nightly'
 
