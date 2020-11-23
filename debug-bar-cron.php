@@ -34,9 +34,7 @@ if ( ! function_exists( 'debug_bar_cron_print_parent_plugin_notice' ) ) {
 	function debug_bar_cron_print_parent_plugin_notice() {
 		$plugin_url = admin_url( 'plugin-install.php?tab=search&s=debug+bar' );
 		echo '<div class="error"><p>';
-		echo 'Activation failed: Debug Bar must be activated to use the <strong>Debug Bar Cron</strong> Plugin. ';
-		sprintf( '<a href="%s">', esc_url( $plugin_url ) );
-		echo 'Visit your plugins page to install & activate.';
+		printf( __( 'Activation failed: Debug Bar must be activated to use the <strong>Debug Bar Cron</strong> Plugin. %sVisit your plugins page to install & activate.', 'debug-bar-cron' ), '<a href="' . esc_url( $plugin_url ) . '">' );
 		echo '</a></p></div>';
 	}
 }
