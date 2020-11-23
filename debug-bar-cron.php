@@ -27,6 +27,19 @@ if ( ! function_exists( 'add_action' ) ) {
 	exit();
 }
 
+if ( ! function_exists( 'debug_bar_cron_print_parent_plugin_notice' ) ) {
+	/**
+	 * Show admin notice
+	 */
+	function debug_bar_cron_print_parent_plugin_notice() {
+		$plugin_url = admin_url( 'plugin-install.php?tab=search&s=debug+bar' );
+		echo '<div class="error"><p>';
+		printf( __( 'Activation failed: Debug Bar must be activated to use the <strong>Debug Bar Cron</strong> Plugin. %sVisit your plugins page to install & activate.', 'debug-bar-cron' ), '<a href="' . esc_url( $plugin_url ) . '">' );
+		echo '</a></p></div>';
+	}
+}
+
+
 if ( ! function_exists( 'debug_bar_cron_has_parent_plugin' ) ) {
 	/**
 	 * Show admin notice & de-activate if debug-bar plugin not active.
@@ -35,8 +48,7 @@ if ( ! function_exists( 'debug_bar_cron_has_parent_plugin' ) ) {
 		$file = plugin_basename( __FILE__ );
 
 		if ( is_admin() && ( ! class_exists( 'Debug_Bar' ) && current_user_can( 'activate_plugins' ) ) && is_plugin_active( $file ) ) {
-			add_action( 'admin_notices', create_function( null, 'echo \'<div class="error"><p>\', sprintf( __( \'Activation failed: Debug Bar must be activated to use the <strong>Debug Bar Cron</strong> Plugin. %sVisit your plugins page to install & activate.\', \'debug-bar-cron\' ), \'<a href="\' . esc_url( admin_url( \'plugin-install.php?tab=search&s=debug+bar\' ) ) . \'">\' ), \'</a></p></div>\';' ) );
-
+			add_action( 'admin_notices', 'debug_bar_cron_print_parent_plugin_notice' );
 			deactivate_plugins( $file, false, is_network_admin() );
 
 			// Add to recently active plugins list.
